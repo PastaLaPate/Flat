@@ -1,5 +1,6 @@
 package com.github.PastaLaPate.FPL_IDE;
 
+import com.github.PastaLaPate.FPL_IDE.fpl.Runner;
 import com.github.PastaLaPate.FPL_IDE.fpl.Saver;
 import com.github.PastaLaPate.FPL_IDE.syntax.Syntax;
 
@@ -123,6 +124,12 @@ public class MainPanel {
             saver.saveFile(path, text[0]);
         });
         fileMenu.add(saveItem);
+        JMenuItem runItem = new JMenuItem("Run");
+        runItem.addActionListener(e -> {
+            System.out.println("[FPL_IDE] [MENU_BAR_MANAGER] Run button clicked");
+            new Runner().Run();
+        });
+        fileMenu.add(runItem);
         return fileMenu;
     }
 

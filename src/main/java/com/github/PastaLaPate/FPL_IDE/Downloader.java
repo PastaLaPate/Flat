@@ -2,6 +2,7 @@ package com.github.PastaLaPate.FPL_IDE;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.io.FileUtils;
 
@@ -20,6 +21,11 @@ public class Downloader {
     public void initDownload() throws IOException {
         System.out.println("[FPL_IDE] Changed state to DOWNLOADING_FPL");
         JsonElement jsonObject = getResulfOfUrl("https://api.github.com/repos/Program132/French-Programming-Language/releases/latest");
+        if (isLastedVersion(jsonObject.getAsJsonObject())) {
+            System.out.println("[FPL_IDE] Lasted version are already installed");
+            return;
+        }
+        System.out.println("[FPL_IDE] [DOWNLOADER] Downloading new version");
         String assetsUrl = jsonObject.getAsJsonObject().get("assets_url").getAsString();
         JsonArray assets = getResulfOfUrl(assetsUrl).getAsJsonArray();
         for (JsonElement jsonElement : assets) {
@@ -27,6 +33,10 @@ public class Downloader {
             String name = jsonElement.getAsJsonObject().get("name").getAsString();
             downloadFile(browserDownloadUrl, name);
         }
+        SettingsManager settingsManager = new SettingsManager();
+        JsonObject finalSettings = new JsonObject();
+        finalSettings.add("FPL_Version", jsonObject.getAsJsonObject().get("tag_name"));
+        settingsManager.setSettingsFile(finalSettings);
     }
 
     public JsonElement getResulfOfUrl(String urla) throws IOException {
@@ -42,6 +52,16 @@ public class Downloader {
         in.close();
         http.disconnect();
         return JsonParser.parseString(content.toString());
+    }
+
+    public boolean isLastedVersion(JsonObject lastedVersionJO) throws IOException {
+        SettingsManager settingsManager = new SettingsManager();
+        JsonObject settings = settingsManager.getSettingsJson().getAsJsonObject();
+        String lastedversion = lastedVersionJO.get("tag_name").getAsString();
+        if (settings.get("FPL_Version").getAsString().contains(lastedversion)) {
+            return true;
+        }
+        return false;
     }
 
     public String getPathFolder() {
