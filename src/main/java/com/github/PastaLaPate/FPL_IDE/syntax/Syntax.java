@@ -13,7 +13,7 @@ public class Syntax {
         ArrayList<Word> words = generateSyntax(text);
         String r = "";
         for (Word word : words) {
-            r = r + "<span style='color: " + word.getColor() + "'>" + word.getWord() + "</span>";
+                r = r + "<span style='color: " + word.getColor() + "'>" + word.getWord() + "</span>";
         }
         return r;
     }
@@ -25,17 +25,19 @@ public class Syntax {
 
         ArrayList<Word> r = new ArrayList<>();
 
-        String delimSpace = "[ ;\"]+";
+        //String delimSpace = "\\+|(?= )";
+        String delimSpace = "[ ]+";
         String[] arr1  = text.split(delimSpace);
         for (String word : arr1) {
+            System.out.println(word);
             if (Arrays.asList(types).contains(word)) {
-                r.add(new Word(word, Color.BLUE));
+                r.add(new Word(" " + word, Color.BLUE));
             } else if (Arrays.asList(function).contains(word)) {
-                r.add(new Word(word, Color.YELLOW));
-            } else if (Arrays.asList(variables).contains(variables)) {
-                r.add(new Word(word, Color.GREEN));
+                r.add(new Word(" " + word, Color.YELLOW));
+            } else if (Arrays.asList(variables).contains(word)) {
+                r.add(new Word(" " + word, Color.GREEN));
             } else {
-                r.add(new Word(word,Color.BLACK));
+                r.add(new Word(" " + word,Color.BLACK));
             }
         }
         return r;
