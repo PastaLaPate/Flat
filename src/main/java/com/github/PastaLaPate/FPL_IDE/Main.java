@@ -13,13 +13,11 @@ import java.nio.file.Path;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        Downloader downloader = new Downloader();
         SettingsManager manager = new SettingsManager();
         manager.init();
-        downloader.initDownload();
-
-        MainPanel panel = new MainPanel();
-        panel.init();
+        DownloadScreen downloadScreen = new DownloadScreen();
+        downloadScreen.init();
+        downloadScreen.download();
     }
 
 }

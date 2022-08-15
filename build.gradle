@@ -5,6 +5,19 @@ plugins {
 group 'fr.PastaLaPate'
 version '1.0-SNAPSHOT'
 
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'com.github.PastaLaPate.FPL_IDE.Main'
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': mainClassName
+        )
+    }
+}
+
 repositories {
     mavenCentral()
 }

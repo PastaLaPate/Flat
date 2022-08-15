@@ -18,20 +18,24 @@ public class Downloader {
 
     }
 
-    public void initDownload() throws IOException {
+    public void initDownload(DownloadHandler downloadHandler) throws IOException {
         System.out.println("[FPL_IDE] Changed state to DOWNLOADING_FPL");
         JsonElement jsonObject = getResulfOfUrl("https://api.github.com/repos/Program132/French-Programming-Language/releases/latest");
         if (isLastedVersion(jsonObject.getAsJsonObject())) {
             System.out.println("[FPL_IDE] Lasted version are already installed");
+            downloadHandler.fileDownloaded(new DownloadEvent("Finished", 1, 1));
             return;
         }
         System.out.println("[FPL_IDE] [DOWNLOADER] Downloading new version");
         String assetsUrl = jsonObject.getAsJsonObject().get("assets_url").getAsString();
         JsonArray assets = getResulfOfUrl(assetsUrl).getAsJsonArray();
+        int i = 0;
         for (JsonElement jsonElement : assets) {
             String browserDownloadUrl = jsonElement.getAsJsonObject().get("browser_download_url").getAsString();
             String name = jsonElement.getAsJsonObject().get("name").getAsString();
             downloadFile(browserDownloadUrl, name);
+            i++;
+            downloadHandler.fileDownloaded(new DownloadEvent(name, i, assets.size()));
         }
         SettingsManager settingsManager = new SettingsManager();
         JsonObject finalSettings = new JsonObject();
