@@ -20,8 +20,8 @@ public class Syntax {
 
     public ArrayList<Word> generateSyntax(String text) {
         String[] types = {"vide", "entier", "decimal", "texte", "auto"};
-        String[] function = {"envoyer", "definir", "appeler", "renvoyer"};
-        String[] variables = {"variable", "changer", "saisir"};
+        String[] function = {"envoyer", "definir", "appeler", "renvoyer", "fichier"};
+        String[] variables = {"variable", "changer", "saisir", "ecrire", "lire"};
 
         ArrayList<Word> r = new ArrayList<>();
 

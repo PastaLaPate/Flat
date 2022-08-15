@@ -15,6 +15,8 @@ public class Runner {
         System.out.println("[FPL_IDE] [RUNNER] launcher main.fpl");
         String command = new Downloader().getPathFolder() + "French_Programming_Language.exe " + new Downloader().getPathFolder() + "main.fpl" ;
         System.out.println("[FPL_IDE] [RUNNER] launching command : " + command);
+        Result result = new Result();
+        result.init();
         try {
             // Use a ProcessBuilder
             ProcessBuilder pb = new ProcessBuilder(new Downloader().getPathFolder() + "French_Programming_Language.exe", new Downloader().getPathFolder() + "main.fpl");
@@ -24,9 +26,10 @@ public class Runner {
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             String line = null;
             while ((line = br.readLine()) != null) {
-                System.out.println(line);
+                result.addLine(line);
             }
             int r = p.waitFor(); // Let the process finish.
+            result.addLine("Finished");
         } catch (Exception e) {
             e.printStackTrace();
         }
