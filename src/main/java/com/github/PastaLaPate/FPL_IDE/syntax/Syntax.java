@@ -17,17 +17,19 @@ public class Syntax {
         // ALL VARIABLES PATTERN
         String[] variables = {"variable", "changer", "saisir", "ecrire", "lire"};
 
+        pane.getHighlighter().removeAllHighlights();
+
         //HIGHTLIGHT TYPES PATTERNS WITH COLOR BLUE
         for (String type : types) {
-            highlight(pane, type, new DefaultHighlighter.DefaultHighlightPainter(Color.BLUE));
+            highlight(pane, type, new DefaultHighlighter.DefaultHighlightPainter(new Color(0, 139, 139)));
         }
         //HIGHTLIGHT FUNCTIONS PATTERNS WITH COLOR YELLOW
         for (String functiona : function) {
-            highlight(pane, functiona, new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW));
+            highlight(pane, functiona, new DefaultHighlighter.DefaultHighlightPainter(new Color(184, 134, 11)));
         }
         //HIGHTLIGHT VARIABLES PATTERNS WITH COLOR GREEN
         for (String variable : variables) {
-            highlight(pane, variable, new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN));
+            highlight(pane, variable, new DefaultHighlighter.DefaultHighlightPainter(new Color(34, 139, 34)));
         }
     }
 
@@ -35,7 +37,6 @@ public class Syntax {
                                  Highlighter.HighlightPainter painter) {
         String text = textarea.getText();
         Highlighter highlighter = textarea.getHighlighter();
-        highlighter.removeAllHighlights();
 
         if (!textToHighlight.isEmpty()) {
             //MATCH PATTERN

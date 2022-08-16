@@ -7,14 +7,14 @@ import java.io.IOException;
 public class DownloadScreen {
 
     private JFrame j;
-    private JProgressBar progressBar = new JProgressBar(0, 1);
+    private final JProgressBar progressBar = new JProgressBar(0, 1);
 
     public DownloadScreen() {
 
     }
 
     public void init() {
-        j = new JFrame();
+        j = new JFrame("DOWNLOADING");
         progressBar.setString("Downloading 0/N/A");
         progressBar.setBounds(40,40,160,30);
         progressBar.setStringPainted(true);
