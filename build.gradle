@@ -1,22 +1,30 @@
 plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'java'
 }
 
-group 'fr.PastaLaPate'
-version '1.0-SNAPSHOT'
-
+apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'application'
 
+group 'fr.PastaLaPate'
+version '1.0-alpha'
+
 mainClassName = 'com.github.PastaLaPate.FPL_IDE.Main'
+
+shadowJar {
+    archiveBaseName.set('FPL_IDE')
+    archiveClassifier.set('')
+    archiveVersion.set('0.1.4-alpha')
+    configurations = [project.configurations.compileClasspath]
+}
 
 jar {
     manifest {
-        attributes(
-                'Main-Class': mainClassName
-        )
+        attributes 'Main-Class': mainClassName
     }
 }
+
 
 repositories {
     mavenCentral()
