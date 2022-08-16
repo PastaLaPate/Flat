@@ -1,46 +1,68 @@
 package com.github.PastaLaPate.FPL_IDE.syntax;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import javax.swing.*;
+import javax.swing.text.*;
+import java.awt.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Syntax {
 
-    public Syntax() {
-
-    }
-
-    public String getFinalString(String text) {
-        ArrayList<Word> words = generateSyntax(text);
-        String r = "";
-        for (Word word : words) {
-                r = r + "<span style='color: " + word.getColor() + "'>" + word.getWord() + "</span>";
-        }
-        return r;
-    }
-
-    public ArrayList<Word> generateSyntax(String text) {
+    // GENERATE SYNTAX
+    public void generateSyntax(JTextPane pane) {
+        // ALL TYPES PATTERN
         String[] types = {"vide", "entier", "decimal", "texte", "auto"};
+        // ALL FUNCTIONS PATTERN
         String[] function = {"envoyer", "definir", "appeler", "renvoyer", "fichier"};
+        // ALL VARIABLES PATTERN
         String[] variables = {"variable", "changer", "saisir", "ecrire", "lire"};
 
-        ArrayList<Word> r = new ArrayList<>();
+        //HIGHTLIGHT TYPES PATTERNS WITH COLOR BLUE
+        for (String type : types) {
+            highlight(pane, type, new DefaultHighlighter.DefaultHighlightPainter(Color.BLUE));
+        }
+        //HIGHTLIGHT FUNCTIONS PATTERNS WITH COLOR YELLOW
+        for (String functiona : function) {
+            highlight(pane, functiona, new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW));
+        }
+        //HIGHTLIGHT VARIABLES PATTERNS WITH COLOR GREEN
+        for (String variable : variables) {
+            highlight(pane, variable, new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN));
+        }
+    }
 
-        //String delimSpace = "\\+|(?= )";
-        String delimSpace = "[ ]+";
-        String[] arr1  = text.split(delimSpace);
-        for (String word : arr1) {
-            System.out.println(word);
-            if (Arrays.asList(types).contains(word)) {
-                r.add(new Word(" " + word, Color.BLUE));
-            } else if (Arrays.asList(function).contains(word)) {
-                r.add(new Word(" " + word, Color.YELLOW));
-            } else if (Arrays.asList(variables).contains(word)) {
-                r.add(new Word(" " + word, Color.GREEN));
-            } else {
-                r.add(new Word(" " + word,Color.BLACK));
+    public static void highlight(JTextPane textarea, String textToHighlight,
+                                 Highlighter.HighlightPainter painter) {
+        String text = textarea.getText();
+        Highlighter highlighter = textarea.getHighlighter();
+        highlighter.removeAllHighlights();
+
+        if (!textToHighlight.isEmpty()) {
+            //MATCH PATTERN
+            Matcher m = compileWildcard(textToHighlight).matcher(text);
+            while (m.find()) {
+                try {
+                    highlighter.addHighlight(m.start(), m.end(), painter);
+                } catch (BadLocationException e) {
+                    throw new IllegalStateException(e); /* cannot happen */
+                }
+                //textarea.setCaretPosition(m.end());
             }
         }
-        return r;
+    }
+
+    public static Pattern compileWildcard(String wildcard) {
+        StringBuilder sb = new StringBuilder("\\b"); /* word boundary */
+        /* the following replaceAll is just for performance */
+        for (char c : wildcard.replaceAll("\\*+", "*").toCharArray()) {
+            if (c == '*') {
+                sb.append("\\S*"); /*- arbitrary non-space characters */
+            } else {
+                sb.append(Pattern.quote(String.valueOf(c)));
+            }
+        }
+        sb.append("\\b"); /* word boundary */
+        return Pattern.compile(sb.toString());
     }
 
 }

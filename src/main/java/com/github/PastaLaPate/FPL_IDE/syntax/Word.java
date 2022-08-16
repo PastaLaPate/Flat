@@ -1,11 +1,13 @@
 package com.github.PastaLaPate.FPL_IDE.syntax;
 
+import java.awt.*;
+
 public class Word {
 
     private String word;
-    private String color;
+    private Color color;
 
-    public Word(String word, String color) {
+    public Word(String word, Color color) {
         this.word = word;
         this.color = color;
     }
@@ -14,7 +16,7 @@ public class Word {
         return word;
     }
 
-    public String getColor() {
+    public Color getColor() {
         return color;
     }
 }

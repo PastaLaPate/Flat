@@ -3,96 +3,58 @@ package com.github.PastaLaPate.FPL_IDE;
 import com.github.PastaLaPate.FPL_IDE.fpl.Runner;
 import com.github.PastaLaPate.FPL_IDE.fpl.Saver;
 import com.github.PastaLaPate.FPL_IDE.syntax.Syntax;
+import com.github.PastaLaPate.FPL_IDE.syntax.Word;
 
 import javax.swing.*;
-import javax.swing.text.Document;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.text.*;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 
-public class MainPanel {
+public class MainPanel extends JFrame{
 
-    final String[] text = {""};
-
-    public MainPanel() {
-
-    }
+    private JTextPane tPane;
 
     public void init() {
         SwingUtilities.invokeLater(new Runnable()
         {
             public void run()
             {
-                // create jeditorpane
-                JEditorPane jEditorPane = new JEditorPane();
-
-                // make it read-only
-                jEditorPane.setEditable(true);
-                jEditorPane.setSize(300, 200);
-
-                // create a scrollpane; modify its attributes as desired
-                JScrollPane scrollPane = new JScrollPane(jEditorPane);
-
-                StyleSheet styleSheet = new StyleSheet();
-
-                styleSheet.addRule("body {background-color:black;margin: 0px;}");
-                styleSheet.addRule("span {color: white;}");
-
-                // add an html editor kit
-                HTMLEditorKit kit = new HTMLEditorKit();
-                kit.setStyleSheet(styleSheet);
-                jEditorPane.setEditorKit(kit);
-                // create a document, set it on the jeditorpane, then add the html
-                Document doc = kit.createDefaultDocument();
-                jEditorPane.setDocument(doc);
-                try {
-                    jEditorPane.setText(new Syntax().getFinalString(new Saver().getFile(new Downloader().getPathFolder() + "main.fpl")));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-                jEditorPane.addKeyListener(new KeyListener() {
+                setDefaultCloseOperation(EXIT_ON_CLOSE);
+                setLocationRelativeTo(null);
+                EmptyBorder eb = new EmptyBorder(new Insets(10, 10, 10, 10));
+                tPane = new JTextPane();
+                tPane.setEditable(true);
+                tPane.setSize(300, 200);
+                tPane.addKeyListener(new KeyListener() {
                     @Override
                     public void keyTyped(KeyEvent e) {
+
                     }
 
                     @Override
                     public void keyPressed(KeyEvent e) {
+                        new Syntax().generateSyntax(tPane);
                     }
 
                     @Override
                     public void keyReleased(KeyEvent e) {
-                        jEditorPane.setText("");
-                        System.out.println(e.getKeyCode());
-                        if (e.getKeyCode() == 8) {
-                            text[0] = removeLastChar(text[0]);
-                        } else if (e.getKeyCode() == 10) {
-                            text[0] = text[0] + "<br>";
-                        } else {
-                            text[0] = text[0] + e.getKeyChar();
-                        }
-                        String finalS = new Syntax().getFinalString(text[0]);
-                        jEditorPane.setText(finalS);
+
                     }
                 });
 
-                // now add it all to a frame
-                JFrame j = new JFrame("FPL IDE");
-                j.getContentPane().add(scrollPane, BorderLayout.CENTER);
-
-                // make it easy to close the application
-                j.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-                // display the frame
-                j.setSize(new Dimension(300,200));
-                j.setJMenuBar(createMenuBar());
-                j.setResizable(true);
-                j.addComponentListener(new ComponentListener() {
+                pack();
+                setSize(300, 200);
+                add(tPane);
+                addComponentListener(new ComponentListener() {
                     @Override
                     public void componentResized(ComponentEvent e) {
-                        jEditorPane.setSize(j.getSize());
+                        tPane.setSize(getSize());
                     }
 
                     @Override
@@ -110,12 +72,7 @@ public class MainPanel {
 
                     }
                 });
-                // pack it, if you prefer
-                //j.pack();
-
-                // center the jframe, then make it visible
-                j.setLocationRelativeTo(null);
-                j.setVisible(true);
+                setVisible(true);
             }
         });
     }
@@ -143,7 +100,7 @@ public class MainPanel {
             Downloader downloader = new Downloader();
             String path = downloader.getPathFolder() + "main.fpl";
             Saver saver = new Saver();
-            saver.saveFile(path, text[0]);
+            saver.saveFile(path, tPane.getText());
         });
         fileMenu.add(saveItem);
         JMenuItem runItem = new JMenuItem("Run");
@@ -160,11 +117,5 @@ public class MainPanel {
         menuBar.add(createFileMenu());
         menuBar.add(createEditMenu());
         return menuBar;
-    }
-
-    private String removeLastChar(String s)
-    {
-//returns the string after removing the last character
-        return s.substring(0, s.length() - 1);
     }
 }

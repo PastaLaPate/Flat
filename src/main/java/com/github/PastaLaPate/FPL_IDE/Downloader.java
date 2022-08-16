@@ -68,7 +68,7 @@ public class Downloader {
         return false;
     }
 
-    public String getPathFolder() {
+    public static String getPathFolder() {
         File file = new File(System.getenv("APPDATA") + "/.fpl_ide");
         file.mkdir();
         return System.getenv("APPDATA") + "/.fpl_ide/";
