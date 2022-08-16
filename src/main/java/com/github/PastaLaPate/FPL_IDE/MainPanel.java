@@ -30,13 +30,14 @@ public class MainPanel {
 
                 // make it read-only
                 jEditorPane.setEditable(true);
+                jEditorPane.setSize(300, 200);
 
                 // create a scrollpane; modify its attributes as desired
                 JScrollPane scrollPane = new JScrollPane(jEditorPane);
 
                 StyleSheet styleSheet = new StyleSheet();
 
-                styleSheet.addRule("body {background-color:black;}");
+                styleSheet.addRule("body {background-color:black;margin: 0px;}");
                 styleSheet.addRule("span {color: white;}");
 
                 // add an html editor kit
@@ -87,7 +88,28 @@ public class MainPanel {
                 // display the frame
                 j.setSize(new Dimension(300,200));
                 j.setJMenuBar(createMenuBar());
+                j.setResizable(true);
+                j.addComponentListener(new ComponentListener() {
+                    @Override
+                    public void componentResized(ComponentEvent e) {
+                        jEditorPane.setSize(j.getSize());
+                    }
 
+                    @Override
+                    public void componentMoved(ComponentEvent e) {
+
+                    }
+
+                    @Override
+                    public void componentShown(ComponentEvent e) {
+
+                    }
+
+                    @Override
+                    public void componentHidden(ComponentEvent e) {
+
+                    }
+                });
                 // pack it, if you prefer
                 //j.pack();
 
