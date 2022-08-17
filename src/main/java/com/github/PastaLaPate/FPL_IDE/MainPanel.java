@@ -2,12 +2,14 @@ package com.github.PastaLaPate.FPL_IDE;
 
 import com.github.PastaLaPate.FPL_IDE.fpl.Runner;
 import com.github.PastaLaPate.FPL_IDE.fpl.Saver;
+import com.github.PastaLaPate.FPL_IDE.panels.About;
 import com.github.PastaLaPate.FPL_IDE.syntax.Syntax;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 
 public class MainPanel extends JFrame{
 
@@ -101,7 +103,12 @@ public class MainPanel extends JFrame{
         saveItem.addActionListener(e -> {
             System.out.println("[FPL_IDE] [MENU_BAR_MANAGER] Save button clicked");
             Downloader downloader = new Downloader();
-            String path = Downloader.getPathFolder() + "main.fpl";
+            String path;
+            try {
+                path = Downloader.getPathFolder() + "main.fpl";
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
             Saver saver = new Saver();
             saver.saveFile(path, tPane.getText());
         });
@@ -109,9 +116,22 @@ public class MainPanel extends JFrame{
         JMenuItem runItem = new JMenuItem("Run");
         runItem.addActionListener(e -> {
             System.out.println("[FPL_IDE] [MENU_BAR_MANAGER] Run button clicked");
-            new Runner().Run();
+            try {
+                new Runner().Run();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
         fileMenu.add(runItem);
+        JMenuItem aboutItem = new JMenuItem("About");
+        aboutItem.addActionListener(e -> {
+            try {
+                new About();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        fileMenu.add(aboutItem);
         return fileMenu;
     }
 

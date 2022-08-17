@@ -49,7 +49,7 @@ public class Downloader {
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(http.getInputStream()));
         String inputLine;
-        StringBuffer content = new StringBuffer();
+        StringBuilder content = new StringBuilder();
         while ((inputLine = in.readLine()) != null) {
             content.append(inputLine);
         }
@@ -62,16 +62,23 @@ public class Downloader {
         SettingsManager settingsManager = new SettingsManager();
         JsonObject settings = settingsManager.getSettingsJson().getAsJsonObject();
         String lastedversion = lastedVersionJO.get("tag_name").getAsString();
-        if (settings.get("FPL_Version").getAsString().contains(lastedversion)) {
-            return true;
-        }
-        return false;
+        return settings.get("FPL_Version").getAsString().contains(lastedversion);
     }
 
-    public static String getPathFolder() {
-        File file = new File(System.getenv("APPDATA") + "/.fpl_ide");
-        file.mkdir();
-        return System.getenv("APPDATA") + "/.fpl_ide/";
+    public static String getPathFolder() throws IOException {
+        File file;
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("win"))
+            file = new File(System.getProperty("user.home") + "\\AppData\\Roaming\\.fpl_ide");
+        else if (os.contains("mac"))
+            file = new File(System.getProperty("user.home") + "/Library/Application Support/fpl_ide");
+        else
+            file = new File(System.getProperty("user.home") + "/.fpl_ide");
+        boolean result = file.mkdir();
+        if (!result) {
+            System.exit(0);
+        }
+        return file.getCanonicalPath();
     }
 
     public void downloadFile(String url, String fileName) throws IOException {

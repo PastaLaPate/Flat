@@ -15,7 +15,7 @@ mainClassName = 'com.github.PastaLaPate.FPL_IDE.Main'
 shadowJar {
     archiveBaseName.set('FPL_IDE')
     archiveClassifier.set('')
-    archiveVersion.set('0.1.3-alpha')
+    archiveVersion.set('0.1.4-alpha')
     configurations = [project.configurations.compileClasspath]
 }
 
