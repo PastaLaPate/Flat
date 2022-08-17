@@ -74,10 +74,7 @@ public class Downloader {
             file = new File(System.getProperty("user.home") + "/Library/Application Support/fpl_ide");
         else
             file = new File(System.getProperty("user.home") + "/.fpl_ide");
-        boolean result = file.mkdir();
-        if (!result) {
-            System.exit(0);
-        }
+        file.mkdir();
         return file.getCanonicalPath();
     }
 
