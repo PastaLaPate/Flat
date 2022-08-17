@@ -1,5 +1,6 @@
 package com.github.PastaLaPate.FPL_IDE;
 
+import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -13,7 +14,7 @@ import java.nio.file.Path;
 
 public class SettingsManager {
 
-    private Downloader downloader = new Downloader();
+    private final Downloader downloader = new Downloader();
 
     public void init() throws IOException {
         getSettingsFile();
@@ -27,11 +28,15 @@ public class SettingsManager {
     }
 
     public File getSettingsFile() throws IOException {
-        String path = downloader.getPathFolder() + "settings.txt";
+        String path = Downloader.getPathFolder() + "settings.txt";
         boolean exists = Files.exists(Path.of(path));
         if (!exists) {
             File settings = new File(path);
-            settings.createNewFile();
+            boolean r = settings.createNewFile();
+            if (!r) {
+                System.out.println("[FPL_IDE] [Settings_Manager] ERROR CREATING SETTINGS FILE");
+                System.exit(0);
+            }
             FileWriter writer = new FileWriter(settings);
             writer.write("{FPL_Version=\"V0\"}");
             writer.close();
@@ -43,13 +48,13 @@ public class SettingsManager {
     public JsonElement getSettingsJson() throws IOException {
         File file = getSettingsFile();
         FileInputStream input = new FileInputStream(file);
-        String r = "";
+        StringBuilder r = new StringBuilder();
         int code;
         while((code = input.read()) != -1) {
             char ch = (char) code;
-            r = r + ch;
+            r.append(ch);
         }
         input.close();
-        return JsonParser.parseString(r);
+        return JsonParser.parseString(r.toString());
     }
 }

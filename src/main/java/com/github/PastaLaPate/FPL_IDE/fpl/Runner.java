@@ -1,6 +1,6 @@
 package com.github.PastaLaPate.FPL_IDE.fpl;
 
-import com.github.PastaLaPate.FPL_IDE.Downloader;
+import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,13 +14,20 @@ public class Runner {
 
     public void Run() throws IOException {
         System.out.println("[FPL_IDE] [RUNNER] launcher main.fpl");
-        String command = Downloader.getPathFolder() + "French_Programming_Language.exe " + Downloader.getPathFolder() + "main.fpl" ;
+        String program_File;
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("win")) {
+            program_File = "French_Programming_Language.exe";
+        } else {
+            program_File = "French_Programming_Language.out";
+        }
+        String command = Downloader.getPathFolder() + program_File + Downloader.getPathFolder() + "main.fpl" ;
         System.out.println("[FPL_IDE] [RUNNER] launching command : " + command);
         Result result = new Result();
         result.init();
         try {
             // Use a ProcessBuilder
-            ProcessBuilder pb = new ProcessBuilder(Downloader.getPathFolder() + "French_Programming_Language.exe", Downloader.getPathFolder() + "main.fpl");
+            ProcessBuilder pb = new ProcessBuilder(Downloader.getPathFolder() + program_File, Downloader.getPathFolder() + "main.fpl");
 
             Process p = pb.start();
             InputStream is = p.getInputStream();

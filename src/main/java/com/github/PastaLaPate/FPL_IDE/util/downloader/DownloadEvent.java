@@ -1,9 +1,9 @@
-package com.github.PastaLaPate.FPL_IDE;
+package com.github.PastaLaPate.FPL_IDE.util.downloader;
 
 public class DownloadEvent {
-    private String fileName;
-    private int fileNumber;
-    private int maxfiles;
+    private final String fileName;
+    private final int fileNumber;
+    private final int maxfiles;
 
     public DownloadEvent(String fileName, int fileNumber, int maxfiles) {
         this.fileName = fileName;

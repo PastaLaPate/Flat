@@ -1,11 +1,11 @@
-package com.github.PastaLaPate.FPL_IDE.syntax;
+package com.github.PastaLaPate.FPL_IDE.util.syntax;
 
 import java.awt.*;
 
 public class Word {
 
-    private String word;
-    private Color color;
+    private final String word;
+    private final Color color;
 
     public Word(String word, Color color) {
         this.word = word;

@@ -1,4 +1,4 @@
-package com.github.PastaLaPate.FPL_IDE.AutoCompletion;
+package com.github.PastaLaPate.FPL_IDE.util.AutoCompletion;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
@@ -12,7 +12,7 @@ public class PopupF {
     private final JFrame f;
     private final JPanel p;
     private final List<String> completions;
-    private ActionListener listener = null;
+    private AutoCompleteListener listener = null;
 
     public PopupF(JFrame jFrame) {
         this.f = jFrame;
@@ -31,7 +31,7 @@ public class PopupF {
         }
     }
 
-    public void setListener(ActionListener listener) {
+    public void setListener(AutoCompleteListener listener) {
         this.listener = listener;
     }
 
@@ -39,7 +39,7 @@ public class PopupF {
         for (String name : completions) {
             JButton button = new JButton(name);
             if (listener != null) {
-                button.addActionListener(listener);
+                button.addActionListener(e -> listener.completionClicked(name));
             }
             p.add(button);
         }

@@ -1,15 +1,14 @@
 package com.github.PastaLaPate.FPL_IDE;
 
-import com.github.PastaLaPate.FPL_IDE.AutoCompletion.Autocompleter;
+import com.github.PastaLaPate.FPL_IDE.util.AutoCompletion.Autocompleter;
 import com.github.PastaLaPate.FPL_IDE.fpl.Runner;
 import com.github.PastaLaPate.FPL_IDE.fpl.Saver;
-import com.github.PastaLaPate.FPL_IDE.panels.About;
-import com.github.PastaLaPate.FPL_IDE.syntax.Syntax;
+import com.github.PastaLaPate.FPL_IDE.util.panels.About;
+import com.github.PastaLaPate.FPL_IDE.util.syntax.Syntax;
+import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Position;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
@@ -31,6 +30,7 @@ public class MainPanel extends JFrame{
             tPane.setEditable(true);
             tPane.setSize(300, 200);
             JFrame f = this;
+            Autocompleter autocompleter = new Autocompleter();
             tPane.addKeyListener(new KeyListener() {
                 @Override
                 public void keyTyped(KeyEvent e) {
@@ -39,19 +39,23 @@ public class MainPanel extends JFrame{
 
                 @Override
                 public void keyPressed(KeyEvent e) {
-                    double x;
-                    double y;
-                    try {
-                        Rectangle2D rectangle2D = tPane.modelToView2D(tPane.getCaretPosition());
-                        x = rectangle2D.getX();
-                        y = rectangle2D.getY();
-                    } catch (BadLocationException e2) {
-                        throw new RuntimeException(e2);
-                    }
                     String string = tPane.getText();
-                    String delim = "[ ;]+";
+                    String delim = "[ ]+";
                     String[] result = string.split(delim);
-                    new Autocompleter().autocomplete(f, result[result.length-1], x, y);
+                    autocompleter.setListener(completion -> {
+                        StringBuilder finalS = new StringBuilder();
+                        int i = 0;
+                        for (String s : result) {
+                            if (i != result.length - 1) {
+                                finalS.append(" ").append(s);
+                                i++;
+                            }
+                        }
+                        finalS.append(" ").append(completion);
+                        tPane.setText(finalS.toString());
+                        new Syntax().generateSyntax(tPane);
+                    });
+                    autocompleter.autocomplete(f, result[result.length-1], tPane.getWidth() - 100, tPane.getHeight() - 45);
                     new Syntax().generateSyntax(tPane);
                 }
 

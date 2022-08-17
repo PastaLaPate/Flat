@@ -1,4 +1,4 @@
-package com.github.PastaLaPate.FPL_IDE.syntax;
+package com.github.PastaLaPate.FPL_IDE.util.syntax;
 
 import javax.swing.*;
 import javax.swing.text.*;

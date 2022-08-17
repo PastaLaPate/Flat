@@ -1,5 +1,6 @@
-package com.github.PastaLaPate.FPL_IDE;
+package com.github.PastaLaPate.FPL_IDE.util.downloader;
 
+import com.github.PastaLaPate.FPL_IDE.SettingsManager;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -8,10 +9,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 
 public class Downloader {
     public Downloader() {
@@ -74,7 +72,12 @@ public class Downloader {
             file = new File(System.getProperty("user.home") + "/Library/Application Support/fpl_ide");
         else
             file = new File(System.getProperty("user.home") + "/.fpl_ide");
-        file.mkdir();
+        if (!file.exists()) {
+            boolean r = file.mkdir();
+            if (r) {
+                System.out.println("[FPL_IDE] [Downloader] Succesfully created dir");
+            }
+        }
         return file.getCanonicalPath();
     }
 

@@ -1,4 +1,6 @@
-package com.github.PastaLaPate.FPL_IDE;
+package com.github.PastaLaPate.FPL_IDE.util.downloader;
+
+import com.github.PastaLaPate.FPL_IDE.MainPanel;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,4 +1,4 @@
-package com.github.PastaLaPate.FPL_IDE.panels;
+package com.github.PastaLaPate.FPL_IDE.util.panels;
 
 import com.github.PastaLaPate.FPL_IDE.SettingsManager;
 

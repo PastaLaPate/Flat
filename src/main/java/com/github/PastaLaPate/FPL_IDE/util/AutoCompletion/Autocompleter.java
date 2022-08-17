@@ -1,4 +1,4 @@
-package com.github.PastaLaPate.FPL_IDE.AutoCompletion;
+package com.github.PastaLaPate.FPL_IDE.util.AutoCompletion;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Autocompleter {
     List<String> completes;
+    AutoCompleteListener listener;
 
     private static PopupF Ppopup = null;
 
@@ -29,9 +30,14 @@ public class Autocompleter {
         }
         PopupF popupF = new PopupF(frame);
         popupF.addCompletions(completions);
+        popupF.setListener(listener);
         System.out.println("X " + x + " Y " + y);
         popupF.show(x, y);
         Ppopup = popupF;
+    }
+
+    public void setListener(AutoCompleteListener listener) {
+        this.listener = listener;
     }
 
     public List<String> getAllCompletion(String word) {
