@@ -1,6 +1,8 @@
 package com.github.PastaLaPate.FPL_IDE.util.downloader;
 
 import com.github.PastaLaPate.FPL_IDE.SettingsManager;
+import com.github.PastaLaPate.FPL_IDE.util.logger.Level;
+import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -17,14 +19,14 @@ public class Downloader {
     }
 
     public void initDownload(DownloadHandler downloadHandler) throws IOException {
-        System.out.println("[FPL_IDE] Changed state to DOWNLOADING_FPL");
+        Logger.log("Changed stat to DOWNLOADING_FPL", this.getClass(), Level.INFO);
         JsonElement jsonObject = getResulfOfUrl("https://api.github.com/repos/Program132/French-Programming-Language/releases/latest");
         if (isLastedVersion(jsonObject.getAsJsonObject())) {
-            System.out.println("[FPL_IDE] Lasted version are already installed");
+            Logger.log("Lasted version are already installed", this.getClass(), Level.INFO);
             downloadHandler.fileDownloaded(new DownloadEvent("Finished", 1, 1));
             return;
         }
-        System.out.println("[FPL_IDE] [DOWNLOADER] Downloading new version");
+        Logger.log("Downloading new version", this.getClass(), Level.INFO);
         String assetsUrl = jsonObject.getAsJsonObject().get("assets_url").getAsString();
         JsonArray assets = getResulfOfUrl(assetsUrl).getAsJsonArray();
         int i = 0;
@@ -75,10 +77,10 @@ public class Downloader {
         if (!file.exists()) {
             boolean r = file.mkdir();
             if (r) {
-                System.out.println("[FPL_IDE] [Downloader] Succesfully created dir");
+                Logger.log("Succesfully created dir", Downloader.class, Level.INFO);
             }
         }
-        return file.getCanonicalPath();
+        return file.getCanonicalPath() + "\\";
     }
 
     public void downloadFile(String url, String fileName) throws IOException {
@@ -86,7 +88,7 @@ public class Downloader {
 
         File file = new File(getPathFolder() + fileName);
 
-        System.out.println("[FPL_IDE] [DOWNLOADER] Downloading " + url + " to " + getPathFolder() + fileName);
+        Logger.log("Downloading " + url + " to " + getPathFolder() + fileName, this.getClass(), Level.INFO);
 
         FileUtils.copyURLToFile(fetchWebsite, file);
     }

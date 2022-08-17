@@ -19,15 +19,15 @@ public class Syntax {
 
         pane.getHighlighter().removeAllHighlights();
 
-        //HIGHTLIGHT TYPES PATTERNS WITH COLOR BLUE
+        //HIGHLIGHT TYPES PATTERNS WITH COLOR BLUE
         for (String type : types) {
             highlight(pane, type, new DefaultHighlighter.DefaultHighlightPainter(new Color(0, 139, 139)));
         }
-        //HIGHTLIGHT FUNCTIONS PATTERNS WITH COLOR YELLOW
+        //HIGHLIGHT FUNCTIONS PATTERNS WITH COLOR YELLOW
         for (String functiona : function) {
             highlight(pane, functiona, new DefaultHighlighter.DefaultHighlightPainter(new Color(184, 134, 11)));
         }
-        //HIGHTLIGHT VARIABLES PATTERNS WITH COLOR GREEN
+        //HIGHLIGHT VARIABLES PATTERNS WITH COLOR GREEN
         for (String variable : variables) {
             highlight(pane, variable, new DefaultHighlighter.DefaultHighlightPainter(new Color(34, 139, 34)));
         }

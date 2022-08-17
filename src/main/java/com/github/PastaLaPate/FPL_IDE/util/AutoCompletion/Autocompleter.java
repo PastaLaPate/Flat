@@ -31,7 +31,6 @@ public class Autocompleter {
         PopupF popupF = new PopupF(frame);
         popupF.addCompletions(completions);
         popupF.setListener(listener);
-        System.out.println("X " + x + " Y " + y);
         popupF.show(x, y);
         Ppopup = popupF;
     }

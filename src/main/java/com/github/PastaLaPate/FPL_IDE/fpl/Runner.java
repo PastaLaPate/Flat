@@ -1,6 +1,8 @@
 package com.github.PastaLaPate.FPL_IDE.fpl;
 
 import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
+import com.github.PastaLaPate.FPL_IDE.util.logger.Level;
+import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,7 +15,7 @@ public class Runner {
     }
 
     public void Run() throws IOException {
-        System.out.println("[FPL_IDE] [RUNNER] launcher main.fpl");
+        Logger.log("launching main.fpl", this.getClass(), Level.INFO);
         String program_File;
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("win")) {
@@ -22,7 +24,7 @@ public class Runner {
             program_File = "French_Programming_Language.out";
         }
         String command = Downloader.getPathFolder() + program_File + Downloader.getPathFolder() + "main.fpl" ;
-        System.out.println("[FPL_IDE] [RUNNER] launching command : " + command);
+        Logger.log("launching with command : " + command, this.getClass(), Level.INFO);
         Result result = new Result();
         result.init();
         try {

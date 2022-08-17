@@ -1,6 +1,8 @@
 package com.github.PastaLaPate.FPL_IDE;
 
 import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
+import com.github.PastaLaPate.FPL_IDE.util.logger.Level;
+import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -34,7 +36,7 @@ public class SettingsManager {
             File settings = new File(path);
             boolean r = settings.createNewFile();
             if (!r) {
-                System.out.println("[FPL_IDE] [Settings_Manager] ERROR CREATING SETTINGS FILE");
+                Logger.log("CREATING SETTINGS FILE", this.getClass(), Level.ERROR);
                 System.exit(0);
             }
             FileWriter writer = new FileWriter(settings);

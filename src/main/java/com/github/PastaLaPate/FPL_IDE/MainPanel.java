@@ -3,6 +3,8 @@ package com.github.PastaLaPate.FPL_IDE;
 import com.github.PastaLaPate.FPL_IDE.util.AutoCompletion.Autocompleter;
 import com.github.PastaLaPate.FPL_IDE.fpl.Runner;
 import com.github.PastaLaPate.FPL_IDE.fpl.Saver;
+import com.github.PastaLaPate.FPL_IDE.util.logger.Level;
+import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
 import com.github.PastaLaPate.FPL_IDE.util.panels.About;
 import com.github.PastaLaPate.FPL_IDE.util.syntax.Syntax;
 import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
@@ -81,6 +83,7 @@ public class MainPanel extends JFrame{
             pack();
             setSize(900, 600);
             scrollPane.add(tPane);
+            tPane.setCaretColor(Color.WHITE);
             addComponentListener(new ComponentListener() {
                 @Override
                 public void componentResized(ComponentEvent e) {
@@ -129,7 +132,7 @@ public class MainPanel extends JFrame{
         //fileMenu.add(openItem);
         JMenuItem saveItem = new JMenuItem("Save");
         saveItem.addActionListener(e -> {
-            System.out.println("[FPL_IDE] [MENU_BAR_MANAGER] Save button clicked");
+            Logger.log("Save button clicked", this.getClass(), Level.INFO);
             Downloader downloader = new Downloader();
             String path;
             try {
@@ -143,7 +146,7 @@ public class MainPanel extends JFrame{
         fileMenu.add(saveItem);
         JMenuItem runItem = new JMenuItem("Run");
         runItem.addActionListener(e -> {
-            System.out.println("[FPL_IDE] [MENU_BAR_MANAGER] Run button clicked");
+            Logger.log("Run button clicked", this.getClass(), Level.INFO);
             try {
                 new Runner().Run();
             } catch (IOException ex) {
