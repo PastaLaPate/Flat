@@ -1,5 +1,6 @@
 package com.github.PastaLaPate.FPL_IDE;
 
+import com.github.PastaLaPate.FPL_IDE.AutoCompletion.Autocompleter;
 import com.github.PastaLaPate.FPL_IDE.fpl.Runner;
 import com.github.PastaLaPate.FPL_IDE.fpl.Saver;
 import com.github.PastaLaPate.FPL_IDE.panels.About;
@@ -7,8 +8,11 @@ import com.github.PastaLaPate.FPL_IDE.syntax.Syntax;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Position;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
 public class MainPanel extends JFrame{
@@ -17,12 +21,16 @@ public class MainPanel extends JFrame{
 
     public void init() {
         SwingUtilities.invokeLater(() -> {
+            ScrollPane scrollPane = new ScrollPane();
+            scrollPane.setBackground(new Color(38, 38, 38));
+            getContentPane().add(scrollPane);
+            getContentPane().setBackground(new Color(38,38,38));
             setDefaultCloseOperation(EXIT_ON_CLOSE);
             setLocationRelativeTo(null);
-            EmptyBorder eb = new EmptyBorder(new Insets(10, 10, 10, 10));
             tPane = new JTextPane();
             tPane.setEditable(true);
             tPane.setSize(300, 200);
+            JFrame f = this;
             tPane.addKeyListener(new KeyListener() {
                 @Override
                 public void keyTyped(KeyEvent e) {
@@ -31,6 +39,19 @@ public class MainPanel extends JFrame{
 
                 @Override
                 public void keyPressed(KeyEvent e) {
+                    double x;
+                    double y;
+                    try {
+                        Rectangle2D rectangle2D = tPane.modelToView2D(tPane.getCaretPosition());
+                        x = rectangle2D.getX();
+                        y = rectangle2D.getY();
+                    } catch (BadLocationException e2) {
+                        throw new RuntimeException(e2);
+                    }
+                    String string = tPane.getText();
+                    String delim = "[ ;]+";
+                    String[] result = string.split(delim);
+                    new Autocompleter().autocomplete(f, result[result.length-1], x, y);
                     new Syntax().generateSyntax(tPane);
                 }
 
@@ -51,10 +72,11 @@ public class MainPanel extends JFrame{
                     }
                 }
             });
-
+            tPane.setBackground(new Color(38, 38, 38));
+            tPane.setForeground(Color.WHITE);
             pack();
-            setSize(300, 200);
-            add(tPane);
+            setSize(900, 600);
+            scrollPane.add(tPane);
             addComponentListener(new ComponentListener() {
                 @Override
                 public void componentResized(ComponentEvent e) {
@@ -77,6 +99,8 @@ public class MainPanel extends JFrame{
                 }
             });
             setJMenuBar(createMenuBar());
+            setContentPane(scrollPane);
+            getContentPane().setBackground(new Color(38,38,38));
             setTitle("FPL_IDE - Main.fpl");
             setVisible(true);
         });
