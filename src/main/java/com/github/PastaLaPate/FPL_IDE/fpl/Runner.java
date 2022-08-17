@@ -37,11 +37,12 @@ public class Runner {
             String line;
             while ((line = br.readLine()) != null) {
                 result.addLine(line);
+                Logger.log("FPL : " + line, this.getClass(), Level.INFO);
             }
             int r = p.waitFor(); // Let the process finish.
             result.addLine("Finished");
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.log(e);
         }
     }
 }

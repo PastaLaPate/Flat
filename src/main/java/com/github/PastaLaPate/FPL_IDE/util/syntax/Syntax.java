@@ -1,5 +1,7 @@
 package com.github.PastaLaPate.FPL_IDE.util.syntax;
 
+import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
+
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
@@ -13,9 +15,9 @@ public class Syntax {
         // ALL TYPES PATTERN
         String[] types = {"vide", "entier", "decimal", "texte", "auto"};
         // ALL FUNCTIONS PATTERN
-        String[] function = {"envoyer", "definir", "appeler", "renvoyer", "fichier"};
+        String[] function = {"envoyer", "definir", "appeler", "renvoyer", "fichier", ";", "(", ")", "{", "}"};
         // ALL VARIABLES PATTERN
-        String[] variables = {"variable", "changer", "saisir", "ecrire", "lire"};
+        String[] variables = {"variable", "changer", "saisir", "ecrire", "lire", "\""};
 
         pane.getHighlighter().removeAllHighlights();
 
@@ -45,7 +47,7 @@ public class Syntax {
                 try {
                     highlighter.addHighlight(m.start(), m.end(), painter);
                 } catch (BadLocationException e) {
-                    throw new IllegalStateException(e); /* cannot happen */
+                    Logger.log(e);
                 }
                 //textarea.setCaretPosition(m.end());
             }

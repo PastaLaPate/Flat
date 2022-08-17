@@ -57,7 +57,9 @@ public class MainPanel extends JFrame{
                         tPane.setText(finalS.toString());
                         new Syntax().generateSyntax(tPane);
                     });
-                    autocompleter.autocomplete(f, result[result.length-1], tPane.getWidth() - 100, tPane.getHeight() - 45);
+                    if (result.length != 0) {
+                        autocompleter.autocomplete(f, result[result.length-1], tPane.getWidth() - 100, tPane.getHeight() - 45);
+                    }
                     new Syntax().generateSyntax(tPane);
                 }
 
@@ -84,6 +86,12 @@ public class MainPanel extends JFrame{
             setSize(900, 600);
             scrollPane.add(tPane);
             tPane.setCaretColor(Color.WHITE);
+            try {
+                tPane.setText(new Saver().getFile(Downloader.getPathFolder() + "main.fpl"));
+            } catch (IOException e) {
+                Logger.log(e);
+            }
+            new Syntax().generateSyntax(tPane);
             addComponentListener(new ComponentListener() {
                 @Override
                 public void componentResized(ComponentEvent e) {
@@ -134,11 +142,11 @@ public class MainPanel extends JFrame{
         saveItem.addActionListener(e -> {
             Logger.log("Save button clicked", this.getClass(), Level.INFO);
             Downloader downloader = new Downloader();
-            String path;
+            String path = "";
             try {
                 path = Downloader.getPathFolder() + "main.fpl";
             } catch (IOException ex) {
-                throw new RuntimeException(ex);
+                Logger.log(ex);
             }
             Saver saver = new Saver();
             saver.saveFile(path, tPane.getText());
@@ -150,7 +158,7 @@ public class MainPanel extends JFrame{
             try {
                 new Runner().Run();
             } catch (IOException ex) {
-                throw new RuntimeException(ex);
+                Logger.log(ex);
             }
         });
         fileMenu.add(runItem);
@@ -159,7 +167,7 @@ public class MainPanel extends JFrame{
             try {
                 new About();
             } catch (IOException ex) {
-                throw new RuntimeException(ex);
+                Logger.log(ex);
             }
         });
         fileMenu.add(aboutItem);

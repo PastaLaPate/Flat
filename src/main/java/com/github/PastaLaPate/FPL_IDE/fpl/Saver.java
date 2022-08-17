@@ -11,7 +11,7 @@ public class Saver {
         try (OutputStream out = new FileOutputStream(path)) {
             out.write(bytes);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            Logger.log(e);
         }
     }
 

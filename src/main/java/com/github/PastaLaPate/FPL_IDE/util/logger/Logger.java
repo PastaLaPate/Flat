@@ -18,12 +18,17 @@ public class Logger {
         print(PREFIX + getClassString(from) + message);
     }
 
+    public static void log(Exception e) {
+        String message = e.getMessage() + "\n" + e.getCause();
+        log(message, Logger.class.getClass(), Level.ERROR);
+    }
+
     private static void print(String message) {
         System.out.println(message);
         try {
             LoggerFileManager.log(message);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log(e);
         }
     }
 
