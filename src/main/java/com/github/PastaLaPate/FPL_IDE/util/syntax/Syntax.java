@@ -18,6 +18,8 @@ public class Syntax {
         String[] function = {"envoyer", "definir", "appeler", "renvoyer", "fichier", ";", "(", ")", "{", "}"};
         // ALL VARIABLES PATTERN
         String[] variables = {"variable", "changer", "saisir", "ecrire", "lire", "\""};
+        // ALL CHAR PATTER
+        String[] chars = {"\"", ";", "'", "->", "=", "+", "-", "{", "}", "(", ")"};
 
         pane.getHighlighter().removeAllHighlights();
 
@@ -32,6 +34,10 @@ public class Syntax {
         //HIGHLIGHT VARIABLES PATTERNS WITH COLOR GREEN
         for (String variable : variables) {
             highlight(pane, variable, new DefaultHighlighter.DefaultHighlightPainter(new Color(34, 139, 34)));
+        }
+        //HIGHLIGHT CHARS PATTERS WITH COLOR RED
+        for (String chars1 : chars) {
+            highlight(pane,chars1, new DefaultHighlighter.DefaultHighlightPainter(new Color(178, 34, 34)));
         }
     }
 
