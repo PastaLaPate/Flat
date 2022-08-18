@@ -17,9 +17,6 @@ import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainPanel extends JFrame{
 
@@ -35,7 +32,6 @@ public class MainPanel extends JFrame{
             ScrollPane scrollPane = new ScrollPane();
             setDefaultCloseOperation(EXIT_ON_CLOSE);
             setLocationRelativeTo(null);
-            Point originaleP = getLocation();
             tPane = new JTextPane();
             tPane.setEditable(true);
             f = this;
@@ -71,7 +67,7 @@ public class MainPanel extends JFrame{
                     if (result.length != 0) {
                         try {
                             Rectangle2D rectangle = ((JTextPane)(e.getSource())).modelToView2D(tPane.getCaretPosition());
-                            autocompleter.autocomplete(f, result[result.length-1], (int) rectangle.getX(), 15 + (int) rectangle.getY(), (Component) e.getSource());
+                            autocompleter.autocomplete(result[result.length-1], (int) rectangle.getX(), 15 + (int) rectangle.getY(), (Component) e.getSource());
                         } catch (BadLocationException ex) {
                             throw new RuntimeException(ex);
                         }
@@ -157,8 +153,6 @@ public class MainPanel extends JFrame{
 
     private JMenu createEditMenu() {
         JMenu editMenu = new JMenu("Edit");
-        //JMenuItem cutItem = new JMenuItem("Cut");
-        //editMenu.add(cutItem);
         JMenuItem copyItem = new JMenuItem("Copy");
         editMenu.add(copyItem);
         JMenuItem pasteItem = new JMenuItem("Paste");
@@ -168,10 +162,6 @@ public class MainPanel extends JFrame{
 
     private JMenu createFileMenu() {
         JMenu fileMenu = new JMenu("File");
-        //JMenuItem newItem = new JMenuItem("New");
-        //fileMenu.add(newItem);
-        //JMenuItem openItem = new JMenuItem("Open");
-        //fileMenu.add(openItem);
         JMenuItem saveItem = new JMenuItem("Save");
         saveItem.addActionListener(e -> {
             Logger.log("Save button clicked", this.getClass(), Level.INFO);

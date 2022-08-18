@@ -8,7 +8,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class Files {
 
@@ -42,9 +41,7 @@ public class Files {
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setDragEnabled(false);
         list.setSelectedIndex(0);
-        list.addListSelectionListener(e -> {
-            listener.fileClicked((String) list.getSelectedValue());
-        });
+        list.addListSelectionListener(e -> listener.fileClicked((String) list.getSelectedValue()));
         sPane.add(list);
         sPane.setBackground(Color.BLACK);
         sPane.setVisible(true);

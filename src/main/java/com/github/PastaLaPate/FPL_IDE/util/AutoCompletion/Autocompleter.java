@@ -1,6 +1,5 @@
 package com.github.PastaLaPate.FPL_IDE.util.AutoCompletion;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +23,12 @@ public class Autocompleter {
         completes.addAll(List.of(variables));
     }
 
-    public void autocomplete(JFrame frame, String word, double x, double y, Component invoker) {
+    public void autocomplete(String word, double x, double y, Component invoker) {
         List<String> completions = getAllCompletion(word);
         if (Ppopup != null) {
             Ppopup.hide();
         }
-        PopupF popupF = new PopupF(frame);
+        PopupF popupF = new PopupF();
         popupF.addCompletions(completions);
         popupF.setListener(listener);
         popupF.show(invoker, (int) x, (int) y);

@@ -1,11 +1,7 @@
 package com.github.PastaLaPate.FPL_IDE.util.AutoCompletion;
 
 import javax.swing.*;
-import javax.swing.event.PopupMenuListener;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +11,7 @@ public class PopupF {
     private final List<String> completions;
     private AutoCompleteListener listener = null;
 
-    public PopupF(JFrame jFrame) {
-        JPanel p = new JPanel();
+    public PopupF() {
         popup = new JPopupMenu();
         completions = new ArrayList<>();
     }
