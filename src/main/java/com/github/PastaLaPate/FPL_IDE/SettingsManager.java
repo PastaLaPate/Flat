@@ -16,8 +16,6 @@ import java.nio.file.Path;
 
 public class SettingsManager {
 
-    private final Downloader downloader = new Downloader();
-
     public void init() throws IOException {
         getSettingsFile();
     }

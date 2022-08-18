@@ -14,6 +14,7 @@ public class Result{
         JFrame f = new JFrame("Result");
         label = new JLabel("<html><body>Running <br>");
         f.add(label);
+        f.setSize(500, 800);
         f.setLocationRelativeTo(null);
         f.setVisible(true);
     }

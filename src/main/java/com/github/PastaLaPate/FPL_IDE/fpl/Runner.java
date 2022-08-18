@@ -39,7 +39,7 @@ public class Runner {
                 result.addLine(line);
                 Logger.log("FPL : " + line, this.getClass(), Level.INFO);
             }
-            int r = p.waitFor(); // Let the process finish.
+            p.waitFor(); // Let the process finish.
             result.addLine("Finished");
         } catch (Exception e) {
             Logger.log(e);
