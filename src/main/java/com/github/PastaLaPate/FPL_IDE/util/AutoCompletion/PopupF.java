@@ -38,9 +38,11 @@ public class PopupF {
     public void show(double x, double y) {
         for (String name : completions) {
             JButton button = new JButton(name);
+            button.setBorder(null);
             if (listener != null) {
                 button.addActionListener(e -> listener.completionClicked(name));
             }
+            button.addActionListener(e -> popup.hide());
             p.add(button);
         }
         popup = popupFactory.getPopup(f, p, (int) x, (int) y);

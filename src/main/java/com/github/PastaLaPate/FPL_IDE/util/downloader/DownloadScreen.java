@@ -1,6 +1,7 @@
 package com.github.PastaLaPate.FPL_IDE.util.downloader;
 
 import com.github.PastaLaPate.FPL_IDE.MainPanel;
+import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,7 +36,7 @@ public class DownloadScreen {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
+                    Logger.log(ex);
                 }
                 j.setVisible(false);
                 MainPanel panel = new MainPanel();

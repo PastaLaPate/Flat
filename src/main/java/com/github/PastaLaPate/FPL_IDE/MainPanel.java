@@ -6,6 +6,7 @@ import com.github.PastaLaPate.FPL_IDE.fpl.Saver;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Level;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
 import com.github.PastaLaPate.FPL_IDE.util.panels.About;
+import com.github.PastaLaPate.FPL_IDE.util.panels.Files;
 import com.github.PastaLaPate.FPL_IDE.util.syntax.Syntax;
 import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
 
@@ -14,24 +15,32 @@ import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainPanel extends JFrame{
 
     private JTextPane tPane;
+    private JFrame f;
+    private String currentFileName = "main.fpl";
+
+    private Files files;
 
     public void init() {
         SwingUtilities.invokeLater(() -> {
+            //BASE
             ScrollPane scrollPane = new ScrollPane();
-            scrollPane.setBackground(new Color(38, 38, 38));
-            getContentPane().add(scrollPane);
-            getContentPane().setBackground(new Color(38,38,38));
             setDefaultCloseOperation(EXIT_ON_CLOSE);
             setLocationRelativeTo(null);
+            Point originaleP = getLocation();
             tPane = new JTextPane();
             tPane.setEditable(true);
-            tPane.setSize(300, 200);
-            JFrame f = this;
+            f = this;
+
+            //SYNTAX AND AUTOCOMPLETER
             Autocompleter autocompleter = new Autocompleter();
             tPane.addKeyListener(new KeyListener() {
                 @Override
@@ -39,30 +48,42 @@ public class MainPanel extends JFrame{
 
                 }
 
+                //AUTOCOMPLETER
                 @Override
                 public void keyPressed(KeyEvent e) {
-                    String string = tPane.getText();
+                    StringBuilder stringBuilder = new StringBuilder();
+                    for (int i = 0; i < tPane.getCaretPosition(); i++) {
+                        stringBuilder.append(tPane.getText().charAt(i));
+                    }
+                    String string = stringBuilder.toString();
                     String delim = "[ ]+";
                     String[] result = string.split(delim);
                     autocompleter.setListener(completion -> {
-                        StringBuilder finalS = new StringBuilder();
-                        int i = 0;
-                        for (String s : result) {
-                            if (i != result.length - 1) {
-                                finalS.append(" ").append(s);
-                                i++;
-                            }
+                        String lastResult = result[result.length - 1];
+                        try {
+                            tPane.getDocument().remove(string.length() - lastResult.length(), lastResult.length() + 1);
+                            tPane.getDocument().insertString(tPane.getCaretPosition(), completion, null);
+                        } catch (BadLocationException ex) {
+                            Logger.log(ex);
                         }
-                        finalS.append(" ").append(completion);
-                        tPane.setText(finalS.toString());
                         new Syntax().generateSyntax(tPane);
                     });
                     if (result.length != 0) {
-                        autocompleter.autocomplete(f, result[result.length-1], tPane.getWidth() - 100, tPane.getHeight() - 45);
+                        try {
+                            int y = (int) tPane.modelToView2D(tPane.getText().length()).getY();
+                            int x = (int) tPane.modelToView2D(tPane.getText().length()).getX();
+                            x = x + getLocation().x;
+                            y = y + getLocation().y;
+                            //autocompleter.autocomplete(f, result[result.length-1], tPane.getWidth() - 50, tPane.getHeight() - 45);
+                            autocompleter.autocomplete(f, result[result.length-1], x, y);
+                        } catch (BadLocationException ex) {
+                            Logger.log(ex);
+                        }
                     }
                     new Syntax().generateSyntax(tPane);
                 }
 
+                //ADD CHAR
                 @Override
                 public void keyReleased(KeyEvent e) {
                     if (e.getKeyChar() == '{') {
@@ -80,22 +101,24 @@ public class MainPanel extends JFrame{
                     }
                 }
             });
+            //STYLE
             tPane.setBackground(new Color(38, 38, 38));
             tPane.setForeground(Color.WHITE);
             pack();
             setSize(900, 600);
             scrollPane.add(tPane);
             tPane.setCaretColor(Color.WHITE);
-            try {
-                tPane.setText(new Saver().getFile(Downloader.getPathFolder() + "main.fpl"));
-            } catch (IOException e) {
-                Logger.log(e);
-            }
+
+
+            //LOAD FILE
+            loadFile("main.fpl");
             new Syntax().generateSyntax(tPane);
             addComponentListener(new ComponentListener() {
                 @Override
                 public void componentResized(ComponentEvent e) {
-                    tPane.setSize(getSize());
+                    int width = getSize().width;
+                    int height = getSize().height;
+                    tPane.setSize(width, height);
                 }
 
                 @Override
@@ -113,8 +136,22 @@ public class MainPanel extends JFrame{
 
                 }
             });
+
+            files = new Files();
+            ScrollPane sPane = files.init(this);
+            files.setListener(this::loadFile);
+            files.addFile("main.fpl");
+            JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, sPane, scrollPane);
+            splitPane.setOneTouchExpandable(true);
+            splitPane.setDividerLocation(50);
+
+            sPane.setMinimumSize(new Dimension(100, 25));
+            sPane.setMaximumSize(new Dimension(200, 200));
+
+            scrollPane.setMaximumSize(new Dimension(200, Integer.MAX_VALUE));
+
             setJMenuBar(createMenuBar());
-            setContentPane(scrollPane);
+            setContentPane(splitPane);
             getContentPane().setBackground(new Color(38,38,38));
             setTitle("FPL_IDE - Main.fpl");
             setVisible(true);
@@ -141,17 +178,22 @@ public class MainPanel extends JFrame{
         JMenuItem saveItem = new JMenuItem("Save");
         saveItem.addActionListener(e -> {
             Logger.log("Save button clicked", this.getClass(), Level.INFO);
-            Downloader downloader = new Downloader();
-            String path = "";
-            try {
-                path = Downloader.getPathFolder() + "main.fpl";
-            } catch (IOException ex) {
-                Logger.log(ex);
-            }
-            Saver saver = new Saver();
-            saver.saveFile(path, tPane.getText());
+            saveFile();
         });
         fileMenu.add(saveItem);
+        JMenuItem saveAs = new JMenuItem("Save as");
+        saveAs.addActionListener(e -> {
+            Logger.log("Save as button clicked", this.getClass(), Level.INFO);
+            saveAsFile();
+        });
+        fileMenu.add(saveAs);
+        JMenuItem loadItem = new JMenuItem("load");
+        loadItem.addActionListener(e -> {
+            //SAVE FILE
+            Logger.log("Load button clicked", this.getClass(), Level.INFO);
+            loadFile();
+        });
+        fileMenu.add(loadItem);
         JMenuItem runItem = new JMenuItem("Run");
         runItem.addActionListener(e -> {
             Logger.log("Run button clicked", this.getClass(), Level.INFO);
@@ -172,6 +214,99 @@ public class MainPanel extends JFrame{
         });
         fileMenu.add(aboutItem);
         return fileMenu;
+    }
+
+    private void saveAsFile() {
+        FileDialog fileDialog = new FileDialog(f, "Select File", FileDialog.SAVE);
+        try {
+            fileDialog.setDirectory(Downloader.getPathFolder());
+            fileDialog.setFilenameFilter((dir, name) -> {
+                return name.toLowerCase().endsWith(".fpl");
+            });
+        } catch (IOException ex) {
+            Logger.log(ex);
+        }
+        fileDialog.setVisible(true);
+
+        String file = fileDialog.getFile();
+        File file1;
+        if (file != null) {
+            file1 = new File(file);
+            Saver saver = new Saver();
+            saver.saveFile(file1.getPath(), tPane.getText());
+        }
+    }
+
+    private void saveFile() {
+        String path = "";
+        try {
+            path = Downloader.getPathFolder() + currentFileName;
+        } catch (IOException ex) {
+            Logger.log(ex);
+        }
+        Saver saver = new Saver();
+        saver.saveFile(path, tPane.getText());
+    }
+
+    private void loadFile() {
+        String path = "";
+        try {
+            path = Downloader.getPathFolder() + currentFileName;
+        } catch (IOException ex) {
+            Logger.log(ex);
+        }
+        Saver saver = new Saver();
+        saver.saveFile(path, tPane.getText());
+
+        //LOAD NEW FILE
+        FileDialog fileDialog = new FileDialog(f, "Select file", FileDialog.LOAD);
+        fileDialog.setFile("*.fpl");
+        try {
+            fileDialog.setDirectory(Downloader.getPathFolder());
+        } catch (IOException ex) {
+            Logger.log(ex);
+        }
+        fileDialog.setVisible(true);
+        String file = fileDialog.getFile();
+        File file1;
+        Logger.log(fileDialog.getDirectory());
+        Logger.log(file);
+        if (file != null) {
+            file1 = new File(file);
+            try {
+                String r = saver.getFile(fileDialog.getDirectory() + file1.getPath());
+                tPane.setText(r);
+                currentFileName = file1.getPath();
+                files.addFile(file1.getPath());
+                new Syntax().generateSyntax(tPane);
+            } catch (IOException ex) {
+                Logger.log(ex);
+            }
+        }
+    }
+
+    private void loadFile(String fileName) {
+        String path = "";
+        try {
+            path = Downloader.getPathFolder() + currentFileName;
+        } catch (IOException ex) {
+            Logger.log(ex);
+        }
+        Saver saver = new Saver();
+        saver.saveFile(path, tPane.getText());
+
+        //LOAD NEW FILE
+        File file1;
+        try {
+            file1 = new File(Downloader.getPathFolder() + fileName);
+            String r = saver.getFile(file1.getPath());
+            tPane.setText(r);
+            currentFileName = fileName;
+            new Syntax().generateSyntax(tPane);
+        } catch (IOException e) {
+            Logger.log(e);
+        }
+
     }
 
     private JMenuBar createMenuBar() {

@@ -1,6 +1,7 @@
 package com.github.PastaLaPate.FPL_IDE.util.logger;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Logger {
 
@@ -19,8 +20,15 @@ public class Logger {
     }
 
     public static void log(Exception e) {
-        String message = e.getMessage() + "\n" + e.getCause();
-        log(message, Logger.class.getClass(), Level.ERROR);
+        StringBuilder message = new StringBuilder(e.getMessage());
+        for (StackTraceElement stackTraceElement : e.getStackTrace()) {
+            message.append("\n").append(stackTraceElement.toString());
+        }
+        log(message.toString(), Logger.class, Level.ERROR);
+    }
+
+    public static void log(Object o) {
+        log(String.valueOf(o));
     }
 
     private static void print(String message) {
