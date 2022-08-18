@@ -11,7 +11,7 @@ import com.github.PastaLaPate.FPL_IDE.util.syntax.Syntax;
 import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
@@ -77,6 +77,7 @@ public class MainPanel extends JFrame{
                        // }
                     }
                     new Syntax().generateSyntax(tPane);
+                    setTabs(tPane);
                 }
 
                 //ADD CHAR
@@ -308,5 +309,28 @@ public class MainPanel extends JFrame{
             Logger.log(ex);
         }
         tPane.setCaretPosition(tPane.getCaretPosition() - 1);
+    }
+
+    private void setTabs( final JTextPane textPane)
+    {
+        FontMetrics fm = textPane.getFontMetrics( textPane.getFont() );
+//          int charWidth = fm.charWidth( 'w' );
+        int charWidth = fm.charWidth( ' ' );
+        int tabWidth = charWidth * 4;
+//      int tabWidth = 100;
+
+        TabStop[] tabs = new TabStop[5];
+
+        for (int j = 0; j < tabs.length; j++)
+        {
+            int tab = j + 1;
+            tabs[j] = new TabStop( tab * tabWidth );
+        }
+
+        TabSet tabSet = new TabSet(tabs);
+        SimpleAttributeSet attributes = new SimpleAttributeSet();
+        StyleConstants.setTabSet(attributes, tabSet);
+        int length = textPane.getDocument().getLength();
+        textPane.getStyledDocument().setParagraphAttributes(0, length, attributes, false);
     }
 }
