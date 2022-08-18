@@ -70,15 +70,15 @@ public class MainPanel extends JFrame{
                     });
                     if (result.length != 0) {
                         try {
-                            int y = (int) tPane.modelToView2D(tPane.getText().length()).getY();
-                            int x = (int) tPane.modelToView2D(tPane.getText().length()).getX();
-                            x = x + getLocation().x;
-                            y = y + getLocation().y;
-                            //autocompleter.autocomplete(f, result[result.length-1], tPane.getWidth() - 50, tPane.getHeight() - 45);
-                            autocompleter.autocomplete(f, result[result.length-1], x, y);
+                            Rectangle2D rectangle = ((JTextPane)(e.getSource())).modelToView2D(tPane.getCaretPosition());
+                            autocompleter.autocomplete(f, result[result.length-1], (int) rectangle.getX(), 15 + (int) rectangle.getY(), (Component) e.getSource());
                         } catch (BadLocationException ex) {
-                            Logger.log(ex);
+                            throw new RuntimeException(ex);
                         }
+                            //autocompleter.autocomplete(f, result[result.length-1], x, y);
+                        //} catch (BadLocationException ex) {
+                        //    ex.printStackTrace();
+                       // }
                     }
                     new Syntax().generateSyntax(tPane);
                 }
@@ -87,16 +87,13 @@ public class MainPanel extends JFrame{
                 @Override
                 public void keyReleased(KeyEvent e) {
                     if (e.getKeyChar() == '{') {
-                        tPane.setText(tPane.getText() + "}");
-                        tPane.setCaretPosition(tPane.getText().length() - 1);
+                        insertChar("}");
                         new Syntax().generateSyntax(tPane);
                     } else if (e.getKeyChar() == '(') {
-                        tPane.setText(tPane.getText() + ")");
-                        tPane.setCaretPosition(tPane.getText().length() - 1);
+                        insertChar(")");
                         new Syntax().generateSyntax(tPane);
                     } else if (e.getKeyChar() == '\"') {
-                        tPane.setText(tPane.getText() + "\"");
-                        tPane.setCaretPosition(tPane.getText().length() - 1);
+                        insertChar("\"");
                         new Syntax().generateSyntax(tPane);
                     }
                 }
@@ -220,9 +217,7 @@ public class MainPanel extends JFrame{
         FileDialog fileDialog = new FileDialog(f, "Select File", FileDialog.SAVE);
         try {
             fileDialog.setDirectory(Downloader.getPathFolder());
-            fileDialog.setFilenameFilter((dir, name) -> {
-                return name.toLowerCase().endsWith(".fpl");
-            });
+            fileDialog.setFilenameFilter((dir, name) -> name.toLowerCase().endsWith(".fpl"));
         } catch (IOException ex) {
             Logger.log(ex);
         }
@@ -314,5 +309,14 @@ public class MainPanel extends JFrame{
         menuBar.add(createFileMenu());
         menuBar.add(createEditMenu());
         return menuBar;
+    }
+
+    private void insertChar(String chara) {
+        try {
+            tPane.getDocument().insertString(tPane.getCaretPosition(),chara, null);
+        } catch (BadLocationException ex) {
+            Logger.log(ex);
+        }
+        tPane.setCaretPosition(tPane.getCaretPosition() - 1);
     }
 }

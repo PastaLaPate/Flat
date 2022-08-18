@@ -1,23 +1,23 @@
 package com.github.PastaLaPate.FPL_IDE.util.AutoCompletion;
 
 import javax.swing.*;
+import javax.swing.event.PopupMenuListener;
+import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PopupF {
 
-    private Popup popup;
-    private final PopupFactory popupFactory;
-    private final JFrame f;
-    private final JPanel p;
+    private final JPopupMenu popup;
     private final List<String> completions;
     private AutoCompleteListener listener = null;
 
     public PopupF(JFrame jFrame) {
-        this.f = jFrame;
-        this.p = new JPanel();
-        popupFactory = new PopupFactory();
+        JPanel p = new JPanel();
+        popup = new JPopupMenu();
         completions = new ArrayList<>();
     }
 
@@ -35,21 +35,21 @@ public class PopupF {
         this.listener = listener;
     }
 
-    public void show(double x, double y) {
+    public void show(Component invoker,int x, int y) {
         for (String name : completions) {
-            JButton button = new JButton(name);
-            button.setBorder(null);
-            if (listener != null) {
-                button.addActionListener(e -> listener.completionClicked(name));
-            }
-            button.addActionListener(e -> popup.hide());
-            p.add(button);
+            JMenuItem menuItem = new JMenuItem(name);
+            menuItem.addActionListener(e -> {
+                listener.completionClicked(name);
+                popup.setVisible(false);
+            });
+            popup.add(menuItem);
         }
-        popup = popupFactory.getPopup(f, p, (int) x, (int) y);
-        popup.show();
+        popup.setFocusable(false);
+        popup.setRequestFocusEnabled(false);
+        popup.show(invoker, x, y);
     }
 
     public void hide() {
-        popup.hide();
+        popup.setVisible(false);
     }
 }
