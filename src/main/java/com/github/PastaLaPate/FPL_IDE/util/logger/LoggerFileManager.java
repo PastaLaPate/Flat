@@ -20,10 +20,10 @@ public class LoggerFileManager {
     }
 
     public LoggerFileManager() {
-        SAVER.saveFile(PATH, "log.txt \n");
+        SAVER.saveFile(PATH, "Logger loaded \n");
     }
 
-    public static void log(String message) throws IOException {
+    public void log(String message) throws IOException {
         String content = SAVER.getFile(PATH) + "\n" + message;
         SAVER.saveFile(PATH, content);
     }

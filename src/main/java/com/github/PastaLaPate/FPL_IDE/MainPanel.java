@@ -1,28 +1,24 @@
 package com.github.PastaLaPate.FPL_IDE;
 
 import com.github.PastaLaPate.FPL_IDE.util.AutoCompletion.Autocompleter;
-import com.github.PastaLaPate.FPL_IDE.fpl.Runner;
-import com.github.PastaLaPate.FPL_IDE.fpl.Saver;
-import com.github.PastaLaPate.FPL_IDE.util.logger.Level;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
-import com.github.PastaLaPate.FPL_IDE.util.panels.About;
 import com.github.PastaLaPate.FPL_IDE.util.panels.Files;
+import com.github.PastaLaPate.FPL_IDE.util.panels.TopBar;
 import com.github.PastaLaPate.FPL_IDE.util.syntax.Syntax;
-import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
 
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
-import java.io.File;
-import java.io.IOException;
 
 public class MainPanel extends JFrame{
 
     private JTextPane tPane;
     private JFrame f;
-    private String currentFileName = "main.fpl";
+    private TopBar topBar;
+
+    private static final Point point = new Point();
 
     private Files files;
 
@@ -35,6 +31,21 @@ public class MainPanel extends JFrame{
             tPane = new JTextPane();
             tPane.setEditable(true);
             f = this;
+            topBar = new TopBar(f, tPane, files);
+            f.setUndecorated(true);
+            f.setResizable(true);
+            f.addMouseListener(new MouseAdapter() {
+                public void mousePressed(MouseEvent e) {
+                    point.x = e.getX();
+                    point.y = e.getY();
+                }
+            });
+            f.addMouseMotionListener(new MouseMotionAdapter() {
+                public void mouseDragged(MouseEvent e) {
+                    Point p = f.getLocation();
+                    f.setLocation(p.x + e.getX() - point.x, p.y + e.getY() - point.y);
+                }
+            });
 
             //SYNTAX AND AUTOCOMPLETER
             Autocompleter autocompleter = new Autocompleter();
@@ -66,8 +77,13 @@ public class MainPanel extends JFrame{
                     });
                     if (result.length != 0) {
                         try {
-                            Rectangle2D rectangle = ((JTextPane)(e.getSource())).modelToView2D(tPane.getCaretPosition());
-                            autocompleter.autocomplete(result[result.length-1], (int) rectangle.getX(), 15 + (int) rectangle.getY(), (Component) e.getSource());
+                            if (result.length < 2) {
+                                Rectangle2D rectangle = ((JTextPane)(e.getSource())).modelToView2D(tPane.getCaretPosition());
+                                autocompleter.autocomplete(result[result.length-1], (int) rectangle.getX(), 15 + (int) rectangle.getY(), (Component) e.getSource());
+                            } else {
+                                Rectangle2D rectangle = ((JTextPane)(e.getSource())).modelToView2D(tPane.getCaretPosition());
+                                autocompleter.autocomplete(result[result.length-1], (int) rectangle.getX(), 15 + (int) rectangle.getY(), (Component) e.getSource(), result[result.length-2].toLowerCase());
+                            }
                         } catch (BadLocationException ex) {
                             throw new RuntimeException(ex);
                         }
@@ -105,7 +121,6 @@ public class MainPanel extends JFrame{
 
 
             //LOAD FILE
-            loadFile("main.fpl");
             new Syntax().generateSyntax(tPane);
             addComponentListener(new ComponentListener() {
                 @Override
@@ -133,173 +148,24 @@ public class MainPanel extends JFrame{
 
             files = new Files();
             ScrollPane sPane = files.init(this);
-            files.setListener(this::loadFile);
+            files.setListener(topBar::loadFile);
             files.addFile("main.fpl");
-            JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, sPane, scrollPane);
+            JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sPane, scrollPane);
             splitPane.setOneTouchExpandable(true);
-            splitPane.setDividerLocation(50);
+            splitPane.setDividerLocation(100);
+            topBar.setSplitPane(splitPane);
 
-            sPane.setMinimumSize(new Dimension(100, 25));
-            sPane.setMaximumSize(new Dimension(200, 200));
+            sPane.setMinimumSize(new Dimension(200, 75));
+            sPane.setMaximumSize(new Dimension(300, 100));
 
             scrollPane.setMaximumSize(new Dimension(200, Integer.MAX_VALUE));
 
-            setJMenuBar(createMenuBar());
+            setJMenuBar(topBar.createMenuBar(true));
             setContentPane(splitPane);
-            getContentPane().setBackground(new Color(38,38,38));
+            getContentPane().setBackground(new Color(23, 23, 23));
             setTitle("FPL_IDE - Main.fpl");
             setVisible(true);
         });
-    }
-
-    private JMenu createEditMenu() {
-        JMenu editMenu = new JMenu("Edit");
-        JMenuItem copyItem = new JMenuItem("Copy");
-        editMenu.add(copyItem);
-        JMenuItem pasteItem = new JMenuItem("Paste");
-        editMenu.add(pasteItem);
-        return editMenu;
-    }
-
-    private JMenu createFileMenu() {
-        JMenu fileMenu = new JMenu("File");
-        JMenuItem saveItem = new JMenuItem("Save");
-        saveItem.addActionListener(e -> {
-            Logger.log("Save button clicked", this.getClass(), Level.INFO);
-            saveFile();
-        });
-        fileMenu.add(saveItem);
-        JMenuItem saveAs = new JMenuItem("Save as");
-        saveAs.addActionListener(e -> {
-            Logger.log("Save as button clicked", this.getClass(), Level.INFO);
-            saveAsFile();
-        });
-        fileMenu.add(saveAs);
-        JMenuItem loadItem = new JMenuItem("load");
-        loadItem.addActionListener(e -> {
-            //SAVE FILE
-            Logger.log("Load button clicked", this.getClass(), Level.INFO);
-            loadFile();
-        });
-        fileMenu.add(loadItem);
-        JMenuItem runItem = new JMenuItem("Run");
-        runItem.addActionListener(e -> {
-            Logger.log("Run button clicked", this.getClass(), Level.INFO);
-            try {
-                new Runner().Run();
-            } catch (IOException ex) {
-                Logger.log(ex);
-            }
-        });
-        fileMenu.add(runItem);
-        JMenuItem aboutItem = new JMenuItem("About");
-        aboutItem.addActionListener(e -> {
-            try {
-                new About();
-            } catch (IOException ex) {
-                Logger.log(ex);
-            }
-        });
-        fileMenu.add(aboutItem);
-        return fileMenu;
-    }
-
-    private void saveAsFile() {
-        FileDialog fileDialog = new FileDialog(f, "Select File", FileDialog.SAVE);
-        try {
-            fileDialog.setDirectory(Downloader.getPathFolder());
-            fileDialog.setFilenameFilter((dir, name) -> name.toLowerCase().endsWith(".fpl"));
-        } catch (IOException ex) {
-            Logger.log(ex);
-        }
-        fileDialog.setVisible(true);
-
-        String file = fileDialog.getFile();
-        File file1;
-        if (file != null) {
-            file1 = new File(file);
-            Saver saver = new Saver();
-            saver.saveFile(file1.getPath(), tPane.getText());
-        }
-    }
-
-    private void saveFile() {
-        String path = "";
-        try {
-            path = Downloader.getPathFolder() + currentFileName;
-        } catch (IOException ex) {
-            Logger.log(ex);
-        }
-        Saver saver = new Saver();
-        saver.saveFile(path, tPane.getText());
-    }
-
-    private void loadFile() {
-        String path = "";
-        try {
-            path = Downloader.getPathFolder() + currentFileName;
-        } catch (IOException ex) {
-            Logger.log(ex);
-        }
-        Saver saver = new Saver();
-        saver.saveFile(path, tPane.getText());
-
-        //LOAD NEW FILE
-        FileDialog fileDialog = new FileDialog(f, "Select file", FileDialog.LOAD);
-        fileDialog.setFile("*.fpl");
-        try {
-            fileDialog.setDirectory(Downloader.getPathFolder());
-        } catch (IOException ex) {
-            Logger.log(ex);
-        }
-        fileDialog.setVisible(true);
-        String file = fileDialog.getFile();
-        File file1;
-        Logger.log(fileDialog.getDirectory());
-        Logger.log(file);
-        if (file != null) {
-            file1 = new File(file);
-            try {
-                String r = saver.getFile(fileDialog.getDirectory() + file1.getPath());
-                tPane.setText(r);
-                currentFileName = file1.getPath();
-                files.addFile(file1.getPath());
-                new Syntax().generateSyntax(tPane);
-            } catch (IOException ex) {
-                Logger.log(ex);
-            }
-        }
-    }
-
-    private void loadFile(String fileName) {
-        String path = "";
-        try {
-            path = Downloader.getPathFolder() + currentFileName;
-        } catch (IOException ex) {
-            Logger.log(ex);
-        }
-        Saver saver = new Saver();
-        saver.saveFile(path, tPane.getText());
-
-        //LOAD NEW FILE
-        File file1;
-        try {
-            file1 = new File(Downloader.getPathFolder() + fileName);
-            String r = saver.getFile(file1.getPath());
-            tPane.setText(r);
-            currentFileName = fileName;
-            new Syntax().generateSyntax(tPane);
-        } catch (IOException e) {
-            Logger.log(e);
-        }
-
-    }
-
-    private JMenuBar createMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-        menuBar.add(createFileMenu());
-        menuBar.add(createEditMenu());
-        return menuBar;
     }
 
     private void insertChar(String chara) {

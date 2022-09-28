@@ -6,6 +6,8 @@ public class Logger {
 
     private static final String PREFIX = "[FPL_IDE] ";
 
+    private static final LoggerFileManager loggerFileManager = new LoggerFileManager();
+
     public static void log(String message) {
         print(PREFIX + message);
     }
@@ -15,11 +17,13 @@ public class Logger {
     }
 
     public static void log(Exception e) {
-        StringBuilder message = new StringBuilder(e.getMessage());
+        System.out.println(PREFIX + e.getClass().getName());
+        e.printStackTrace();
+/*        StringBuilder message = new StringBuilder(e.getMessage());
         for (StackTraceElement stackTraceElement : e.getStackTrace()) {
             message.append("\n").append(stackTraceElement.toString());
         }
-        log(message.toString(), Logger.class, Level.ERROR);
+        log(message.toString(), Logger.class, Level.ERROR);*/
     }
 
     public static void log(Object o) {
@@ -29,7 +33,7 @@ public class Logger {
     private static void print(String message) {
         System.out.println(message);
         try {
-            LoggerFileManager.log(message);
+            loggerFileManager.log(message);
         } catch (IOException e) {
             log(e);
         }

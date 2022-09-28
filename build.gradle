@@ -15,7 +15,7 @@ mainClassName = 'com.github.PastaLaPate.FPL_IDE.Main'
 shadowJar {
     archiveBaseName.set('FPL_IDE')
     archiveClassifier.set('')
-    archiveVersion.set('0.3.1-alpha')
+    archiveVersion.set('v0.3.1-alpha')
     configurations = [project.configurations.compileClasspath]
 }
 
@@ -33,6 +33,7 @@ repositories {
 dependencies {
     implementation 'com.google.code.gson:gson:2.9.1'
     implementation 'commons-io:commons-io:2.11.0'
+    implementation 'org.jetbrains:annotations:23.0.0'
 }
 
 test {
