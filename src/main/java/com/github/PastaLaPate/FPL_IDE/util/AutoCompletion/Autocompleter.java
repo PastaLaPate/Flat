@@ -1,6 +1,6 @@
 package com.github.PastaLaPate.FPL_IDE.util.AutoCompletion;
 
-import com.github.PastaLaPate.FPL_IDE.fpl.Saver;
+import com.github.PastaLaPate.FPL_IDE.util.Saver;
 import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
 
 import java.awt.*;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Autocompleter {
-    List<String> completes;
+    final List<String> completes;
     AutoCompleteListener listener;
 
     private static PopupF Ppopup = null;

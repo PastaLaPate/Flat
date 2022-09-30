@@ -1,4 +1,4 @@
-package com.github.PastaLaPate.FPL_IDE.fpl;
+package com.github.PastaLaPate.FPL_IDE.util;
 
 import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
 
@@ -17,10 +17,17 @@ public class Saver {
     }
 
     public String getFile(String path) throws IOException {
-        FileInputStream input = new FileInputStream(path);
+        FileInputStream input = null;
+        try {
+            input = new FileInputStream(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         StringBuilder r = new StringBuilder();
         int code;
-        while((code = input.read()) != -1) {
+        while (true) {
+            assert input != null;
+            if ((code = input.read()) == -1) break;
             char ch = (char) code;
             r.append(ch);
         }

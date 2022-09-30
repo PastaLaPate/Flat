@@ -13,6 +13,7 @@ public class PopupF {
 
     public PopupF() {
         popup = new JPopupMenu();
+        popup.setPopupSize(50, 200);
         completions = new ArrayList<>();
     }
 

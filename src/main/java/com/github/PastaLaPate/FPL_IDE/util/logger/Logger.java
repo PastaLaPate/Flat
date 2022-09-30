@@ -19,11 +19,6 @@ public class Logger {
     public static void log(Exception e) {
         System.out.println(PREFIX + e.getClass().getName());
         e.printStackTrace();
-/*        StringBuilder message = new StringBuilder(e.getMessage());
-        for (StackTraceElement stackTraceElement : e.getStackTrace()) {
-            message.append("\n").append(stackTraceElement.toString());
-        }
-        log(message.toString(), Logger.class, Level.ERROR);*/
     }
 
     public static void log(Object o) {

@@ -1,8 +1,9 @@
 package com.github.PastaLaPate.FPL_IDE.util.panels;
 
 import com.github.PastaLaPate.FPL_IDE.Constants;
+import com.github.PastaLaPate.FPL_IDE.MainPanel;
 import com.github.PastaLaPate.FPL_IDE.fpl.Runner;
-import com.github.PastaLaPate.FPL_IDE.fpl.Saver;
+import com.github.PastaLaPate.FPL_IDE.util.Saver;
 import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Level;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
@@ -14,19 +15,21 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.util.Objects;
 
 public class TopBar {
 
+    private final MainPanel mainPanel;
     private String currentFileName = "main.fpl";
     private final JFrame f;
     private final JTextPane tPane;
     private final Files files;
     private JSplitPane splitPane;
-    public TopBar(JFrame f, JTextPane tPane, Files files) {
+    public TopBar(JFrame f, JTextPane tPane, Files files, MainPanel mainPanel) {
         this.f = f;
         this.tPane = tPane;
         this.files = files;
+        this.mainPanel = mainPanel;
     }
 
     public void setSplitPane(JSplitPane splitPane) {
@@ -139,7 +142,7 @@ public class TopBar {
 
         //LOAD NEW FILE
         FileDialog fileDialog = new FileDialog(f, "Select file", FileDialog.LOAD);
-        fileDialog.setFile("*.fpl");
+        fileDialog.setFilenameFilter((dir, name) -> (name.endsWith(".fpl")));
         try {
             fileDialog.setDirectory(Downloader.getPathFolder());
         } catch (IOException ex) {
@@ -155,8 +158,8 @@ public class TopBar {
             try {
                 String r = saver.getFile(fileDialog.getDirectory() + file1.getPath());
                 tPane.setText(r);
-                currentFileName = file1.getPath();
-                files.addFile(file1.getPath());
+                currentFileName = file1.getName();
+                files.addFile(currentFileName);
                 new Syntax().generateSyntax(tPane);
             } catch (IOException ex) {
                 Logger.log(ex);
@@ -201,23 +204,28 @@ public class TopBar {
 
     public JMenuBar createMenuBar(boolean withJMenu) {
         JMenuBar menuBar = new JMenuBar();
-        URL closeIconURL;
+        currentFileName = "main.fpl";
         JButton closeButton;
         JButton maximizeButton;
         JButton minimizeButton;
         try {
-            closeIconURL = new URL("https://www.freeiconspng.com/uploads/close-icon-48.png");
-            Image image = ImageIO.read(closeIconURL);
+            Image image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource("img/cross.png")));
             closeButton = new JButton(new ImageIcon(image.getScaledInstance(15, 15, 0)));
             closeButton.setContentAreaFilled(false);
             closeButton.setFocusPainted(false);
             closeButton.setBorderPainted(false);
             closeButton.addActionListener(e -> {
                 Logger.log("CLOSING APP", this.getClass(), Level.INFO);
+                if (mainPanel != null) {
+                    try {
+                        new Saver().saveFile(Downloader.getPathFolder() + currentFileName, tPane.getText());
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
                 System.exit(0);
             });
-            URL maximizeIconURL = new URL("https://cdn2.iconfinder.com/data/icons/material-line/1024/maximize-256.png");
-            Image image1 = ImageIO.read(maximizeIconURL);
+            Image image1 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource("img/maximize.png")));
             maximizeButton = new JButton(new ImageIcon(image1.getScaledInstance(15,15, 0)));
             maximizeButton.setContentAreaFilled(false);
             maximizeButton.setFocusPainted(false);
@@ -232,8 +240,7 @@ public class TopBar {
                 }
                 splitPane.updateUI();
             });
-            URL minimizeIconURL = new URL("https://cdn0.iconfinder.com/data/icons/basic-ui-set-2/100/Essential_Icons-77-512.png");
-            Image image2 = ImageIO.read(minimizeIconURL);
+            Image image2 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResource("img/minus.png")));
             minimizeButton = new JButton(new ImageIcon(image2.getScaledInstance(15,15,0)));
             minimizeButton.setContentAreaFilled(false);
             minimizeButton.setFocusPainted(false);

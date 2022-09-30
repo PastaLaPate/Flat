@@ -16,6 +16,7 @@ public class Files {
     private ScrollPane sPane;
     private JList<Object> list;
     private List<String> strings;
+    private int selection;
 
     public void setListener(FilePaneListener listener) {
         this.listener = listener;
@@ -43,7 +44,13 @@ public class Files {
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setDragEnabled(false);
         list.setSelectedIndex(0);
-        list.addListSelectionListener(e -> listener.fileClicked((String) list.getSelectedValue()));
+        list.addListSelectionListener(e -> {
+            if (selection == list.getSelectedIndex()) {
+                listener.fileClicked((String) list.getSelectedValue());
+            } else {
+                selection = list.getSelectedIndex();
+            }
+        });
         list.setBackground(Constants.BACKGROUND);
         sPane.add(list);
         sPane.setBackground(Constants.BACKGROUND);
@@ -54,6 +61,10 @@ public class Files {
     public void addFile(String fileName) {
         strings.add(fileName);
         list.setListData(strings.toArray());
+    }
+
+    public List<String> getFiles() {
+        return strings;
     }
 
 }

@@ -10,6 +10,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.io.FileUtils;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -121,7 +122,12 @@ public class Downloader {
 
         Logger.log("Downloading " + url + " to " + path + fileName, this.getClass(), Level.INFO);
 
-        FileUtils.copyURLToFile(fetchWebsite, file);
+        try {
+            FileUtils.copyURLToFile(fetchWebsite, file);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error during downloading : " + fileName, "ERROR DOWNLOADING", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        }
     }
 
     public String getPathOfJar() {

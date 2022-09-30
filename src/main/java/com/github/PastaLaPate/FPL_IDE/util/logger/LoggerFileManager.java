@@ -1,6 +1,6 @@
 package com.github.PastaLaPate.FPL_IDE.util.logger;
 
-import com.github.PastaLaPate.FPL_IDE.fpl.Saver;
+import com.github.PastaLaPate.FPL_IDE.util.Saver;
 import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
 
 import java.io.IOException;

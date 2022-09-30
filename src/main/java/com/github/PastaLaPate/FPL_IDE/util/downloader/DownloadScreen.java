@@ -26,7 +26,7 @@ public class DownloadScreen {
         j.setSize(new Dimension(400, 400));
         j.setLocationRelativeTo(null);
         j.setUndecorated(true);
-        j.setJMenuBar(new TopBar(j, null, null).createMenuBar(false));
+        j.setJMenuBar(new TopBar(j, null, null, null).createMenuBar(false));
         j.setVisible(true);
     }
 

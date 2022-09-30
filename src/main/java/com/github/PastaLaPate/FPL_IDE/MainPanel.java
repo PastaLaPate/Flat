@@ -1,6 +1,8 @@
 package com.github.PastaLaPate.FPL_IDE;
 
 import com.github.PastaLaPate.FPL_IDE.util.AutoCompletion.Autocompleter;
+import com.github.PastaLaPate.FPL_IDE.util.Saver;
+import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
 import com.github.PastaLaPate.FPL_IDE.util.panels.Files;
 import com.github.PastaLaPate.FPL_IDE.util.panels.TopBar;
@@ -11,6 +13,7 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 
 public class MainPanel extends JFrame{
 
@@ -31,7 +34,13 @@ public class MainPanel extends JFrame{
             tPane = new JTextPane();
             tPane.setEditable(true);
             f = this;
-            topBar = new TopBar(f, tPane, files);
+            files = new Files();
+            topBar = new TopBar(f, tPane, files, this);
+            try {
+                tPane.setText(new Saver().getFile(Downloader.getPathFolder() + "main.fpl"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             f.setUndecorated(true);
             f.setResizable(true);
             f.addMouseListener(new MouseAdapter() {
@@ -145,8 +154,6 @@ public class MainPanel extends JFrame{
 
                 }
             });
-
-            files = new Files();
             ScrollPane sPane = files.init(this);
             files.setListener(topBar::loadFile);
             files.addFile("main.fpl");
@@ -155,10 +162,10 @@ public class MainPanel extends JFrame{
             splitPane.setDividerLocation(100);
             topBar.setSplitPane(splitPane);
 
-            sPane.setMinimumSize(new Dimension(200, 75));
-            sPane.setMaximumSize(new Dimension(300, 100));
+            sPane.setMinimumSize(new Dimension(100, 100));
+            sPane.setMaximumSize(new Dimension(500, 300));
 
-            scrollPane.setMaximumSize(new Dimension(200, Integer.MAX_VALUE));
+            scrollPane.setMaximumSize(new Dimension(400, Integer.MAX_VALUE));
 
             setJMenuBar(topBar.createMenuBar(true));
             setContentPane(splitPane);
