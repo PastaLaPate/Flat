@@ -1,13 +1,14 @@
-package com.github.PastaLaPate.FPL_IDE.ui.panels;
+package com.github.PastaLaPate.FPL_IDE.ui.panels.editor;
 
 import com.github.PastaLaPate.FPL_IDE.Constants;
 import com.github.PastaLaPate.FPL_IDE.MainPanel;
 import com.github.PastaLaPate.FPL_IDE.fpl.Runner;
+import com.github.PastaLaPate.FPL_IDE.ui.panels.Files.Files;
+import com.github.PastaLaPate.FPL_IDE.ui.panels.utils.About;
 import com.github.PastaLaPate.FPL_IDE.util.Saver;
 import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Level;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
-import com.github.PastaLaPate.FPL_IDE.util.syntax.Syntax;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -22,12 +23,10 @@ public class TopBar {
     private final MainPanel mainPanel;
     private String currentFileName = "main.fpl";
     private final JFrame f;
-    private final JTextPane tPane;
     private final Files files;
     private JSplitPane splitPane;
-    public TopBar(JFrame f, JTextPane tPane, Files files, MainPanel mainPanel) {
+    public TopBar(JFrame f, Files files, MainPanel mainPanel) {
         this.f = f;
-        this.tPane = tPane;
         this.files = files;
         this.mainPanel = mainPanel;
     }
@@ -115,7 +114,7 @@ public class TopBar {
         if (file != null) {
             file1 = new File(file);
             Saver saver = new Saver();
-            saver.saveFile(file1.getPath(), tPane.getText());
+            saver.saveFile(file1.getPath(), mainPanel.editorTabsPanel.getCurrentFileContent());
         }
     }
 
@@ -127,7 +126,7 @@ public class TopBar {
             Logger.log(ex);
         }
         Saver saver = new Saver();
-        saver.saveFile(path, tPane.getText());
+        saver.saveFile(path, mainPanel.editorTabsPanel.getCurrentFileContent());
     }
 
     private void loadFile() {
@@ -138,7 +137,7 @@ public class TopBar {
             Logger.log(ex);
         }
         Saver saver = new Saver();
-        saver.saveFile(path, tPane.getText());
+        saver.saveFile(path, mainPanel.editorTabsPanel.getCurrentFileContent());
 
         //LOAD NEW FILE
         FileDialog fileDialog = new FileDialog(f, "Select file", FileDialog.LOAD);
@@ -155,36 +154,20 @@ public class TopBar {
         Logger.log(file);
         if (file != null) {
             file1 = new File(file);
-            try {
-                String r = saver.getFile(fileDialog.getDirectory() + file1.getPath());
-                tPane.setText(r);
-                currentFileName = file1.getName();
-                files.addFile(currentFileName);
-                new Syntax().generateSyntax(tPane);
-            } catch (IOException ex) {
-                Logger.log(ex);
-            }
+            mainPanel.editorTabsPanel.openFile(file1);
+            currentFileName = file1.getName();
+            files.addFile(currentFileName);
         }
     }
 
     public void loadFile(String fileName) {
-        String path = "";
-        try {
-            path = Downloader.getPathFolder() + currentFileName;
-        } catch (IOException ex) {
-            Logger.log(ex);
-        }
-        Saver saver = new Saver();
-        saver.saveFile(path, tPane.getText());
 
         //LOAD NEW FILE
         File file1;
         try {
             file1 = new File(Downloader.getPathFolder() + fileName);
-            String r = saver.getFile(file1.getPath());
-            tPane.setText(r);
+            mainPanel.editorTabsPanel.openFile(file1);
             currentFileName = fileName;
-            new Syntax().generateSyntax(tPane);
         } catch (IOException e) {
             Logger.log(e);
         }
@@ -217,12 +200,8 @@ public class TopBar {
             closeButton.addActionListener(e -> {
                 Logger.log("CLOSING APP", this.getClass(), Level.INFO);
                 if (mainPanel != null) {
-                    try {
-                        String text = tPane.getText();
-                        String path = Downloader.getPathFolder() + currentFileName;
-                        new Saver().saveFile(path, text);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
+                    for (TextEditor editor : mainPanel.editorTabsPanel.getTabs()) {
+                        new Saver().saveFile(editor.getCurrentfile().getPath(), editor.getText());
                     }
                 }
                 System.exit(0);
@@ -238,9 +217,7 @@ public class TopBar {
                 if (f.getExtendedState() == 0) {
                     mainPanel.makeMaximized();
                 } else {
-                    f.setExtendedState(0);
-                    f.setSize(1920/2, 1080/2);
-                    f.setState(Frame.NORMAL);
+                    mainPanel.makeDeufaultSize();
                 }
                 splitPane.updateUI();
             });

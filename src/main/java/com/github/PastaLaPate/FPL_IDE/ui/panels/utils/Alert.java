@@ -1,4 +1,4 @@
-package com.github.PastaLaPate.FPL_IDE.ui.panels;
+package com.github.PastaLaPate.FPL_IDE.ui.panels.utils;
 
 import com.github.PastaLaPate.FPL_IDE.interfaces.listeners.IAlertListener;
 

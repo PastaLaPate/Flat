@@ -1,4 +1,4 @@
-package com.github.PastaLaPate.FPL_IDE.ui.panels;
+package com.github.PastaLaPate.FPL_IDE.ui.panels.Files;
 
 import com.github.PastaLaPate.FPL_IDE.Constants;
 import com.github.PastaLaPate.FPL_IDE.interfaces.listeners.FilePaneListener;
@@ -61,10 +61,6 @@ public class Files {
     public void addFile(String fileName) {
         strings.add(fileName);
         list.setListData(strings.toArray());
-    }
-
-    public List<String> getFiles() {
-        return strings;
     }
 
 }

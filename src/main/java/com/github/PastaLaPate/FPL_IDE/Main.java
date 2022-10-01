@@ -1,6 +1,6 @@
 package com.github.PastaLaPate.FPL_IDE;
 
-import com.github.PastaLaPate.FPL_IDE.util.downloader.DownloadScreen;
+import com.github.PastaLaPate.FPL_IDE.ui.panels.Download.DownloadScreen;
 
 import java.io.*;
 

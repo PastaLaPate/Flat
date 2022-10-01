@@ -1,4 +1,4 @@
-package com.github.PastaLaPate.FPL_IDE.util.AutoCompletion;
+package com.github.PastaLaPate.FPL_IDE.interfaces.listeners;
 
 public interface AutoCompleteListener {
     void completionClicked(String completion);

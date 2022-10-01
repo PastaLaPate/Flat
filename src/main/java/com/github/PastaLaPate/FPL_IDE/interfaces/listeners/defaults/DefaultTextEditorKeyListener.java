@@ -1,6 +1,6 @@
 package com.github.PastaLaPate.FPL_IDE.interfaces.listeners.defaults;
 
-import com.github.PastaLaPate.FPL_IDE.ui.panels.TextEditor;
+import com.github.PastaLaPate.FPL_IDE.ui.panels.editor.TextEditor;
 import com.github.PastaLaPate.FPL_IDE.util.AutoCompletion.Autocompleter;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
 

@@ -1,8 +1,9 @@
-package com.github.PastaLaPate.FPL_IDE.util.downloader;
+package com.github.PastaLaPate.FPL_IDE.ui.panels.Download;
 
 import com.github.PastaLaPate.FPL_IDE.MainPanel;
+import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
-import com.github.PastaLaPate.FPL_IDE.ui.panels.TopBar;
+import com.github.PastaLaPate.FPL_IDE.ui.panels.editor.TopBar;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +27,7 @@ public class DownloadScreen {
         j.setSize(new Dimension(400, 400));
         j.setLocationRelativeTo(null);
         j.setUndecorated(true);
-        j.setJMenuBar(new TopBar(j, null, null, null).createMenuBar(false));
+        j.setJMenuBar(new TopBar(j, null, null).createMenuBar(false));
         j.setVisible(true);
     }
 

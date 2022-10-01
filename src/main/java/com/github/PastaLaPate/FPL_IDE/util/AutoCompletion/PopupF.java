@@ -1,5 +1,7 @@
 package com.github.PastaLaPate.FPL_IDE.util.AutoCompletion;
 
+import com.github.PastaLaPate.FPL_IDE.interfaces.listeners.AutoCompleteListener;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;

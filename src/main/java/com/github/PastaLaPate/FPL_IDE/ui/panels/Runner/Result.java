@@ -1,6 +1,7 @@
-package com.github.PastaLaPate.FPL_IDE.fpl;
+package com.github.PastaLaPate.FPL_IDE.ui.panels.Runner;
 
-import com.github.PastaLaPate.FPL_IDE.ui.panels.TopBar;
+import com.github.PastaLaPate.FPL_IDE.ui.panels.editor.TopBar;
+import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
 
 import javax.swing.*;
 
@@ -18,8 +19,10 @@ public class Result{
         f.add(label);
         f.setSize(500, 800);
         f.setLocationRelativeTo(null);
+        f.setUndecorated(true);
+        f.setJMenuBar(new TopBar(f, null, null).createMenuBar(false));
         f.setVisible(true);
-        f.setJMenuBar(new TopBar(f, null, null, null).createMenuBar(false));
+        Logger.log("test");
     }
 
     public void addLine(String line) {

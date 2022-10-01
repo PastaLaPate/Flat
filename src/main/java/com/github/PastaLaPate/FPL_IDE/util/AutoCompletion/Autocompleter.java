@@ -1,5 +1,6 @@
 package com.github.PastaLaPate.FPL_IDE.util.AutoCompletion;
 
+import com.github.PastaLaPate.FPL_IDE.interfaces.listeners.AutoCompleteListener;
 import com.github.PastaLaPate.FPL_IDE.util.Saver;
 import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
 

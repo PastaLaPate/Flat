@@ -1,6 +1,7 @@
-package com.github.PastaLaPate.FPL_IDE.ui.panels;
+package com.github.PastaLaPate.FPL_IDE.ui.panels.editor;
 
 import com.github.PastaLaPate.FPL_IDE.Constants;
+import com.github.PastaLaPate.FPL_IDE.interfaces.listeners.defaults.DefaultTextEditorKeyListener;
 import com.github.PastaLaPate.FPL_IDE.util.Saver;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
 import com.github.PastaLaPate.FPL_IDE.util.syntax.Syntax;
@@ -8,12 +9,14 @@ import com.github.PastaLaPate.FPL_IDE.util.syntax.Syntax;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 
 public class TextEditor extends JTextPane {
 
     private final Syntax syntax = new Syntax();
     private final Saver saver = new Saver();
+    private File currentfile;
 
     public TextEditor() {
         super();
@@ -21,11 +24,13 @@ public class TextEditor extends JTextPane {
         setBackground(Constants.BACKGROUND);
         setCaretColor(Constants.TEXT);
         setForeground(Constants.TEXT);
+        addKeyListener(new DefaultTextEditorKeyListener(this));
     }
 
-    public void loadFile(String path) {
+    public void loadFile(File file) {
+        currentfile = file;
         try {
-            setText(saver.getFile(path));
+            setText(saver.getFile(file.getPath()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -74,5 +79,9 @@ public class TextEditor extends JTextPane {
         StyleConstants.setTabSet(attributes, tabSet);
         int length = getDocument().getLength();
         getStyledDocument().setParagraphAttributes(0, length, attributes, false);
+    }
+
+    public File getCurrentfile() {
+        return currentfile;
     }
 }

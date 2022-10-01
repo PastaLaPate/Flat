@@ -1,5 +1,6 @@
 package com.github.PastaLaPate.FPL_IDE.fpl;
 
+import com.github.PastaLaPate.FPL_IDE.ui.panels.Runner.Result;
 import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Level;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;

@@ -2,6 +2,7 @@ package com.github.PastaLaPate.FPL_IDE.util.downloader;
 
 import com.github.PastaLaPate.FPL_IDE.Main;
 import com.github.PastaLaPate.FPL_IDE.SettingsManager;
+import com.github.PastaLaPate.FPL_IDE.interfaces.listeners.DownloadHandler;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Level;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
 import com.google.gson.JsonArray;
