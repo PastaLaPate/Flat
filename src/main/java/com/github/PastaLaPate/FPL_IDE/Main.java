@@ -5,13 +5,16 @@ import com.github.PastaLaPate.FPL_IDE.util.downloader.DownloadScreen;
 import java.io.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
 
+    public static final String VERSION = "v0.3.1-alpha";
+
+    public static void main(String[] args) throws IOException {
         SettingsManager manager = new SettingsManager();
         manager.init();
         DownloadScreen downloadScreen = new DownloadScreen();
         downloadScreen.init();
-        downloadScreen.download();
+        downloadScreen.downloadIDE();
+        downloadScreen.downloadFPL();
     }
 
 }

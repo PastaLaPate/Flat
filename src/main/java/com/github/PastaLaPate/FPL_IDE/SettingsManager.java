@@ -38,7 +38,7 @@ public class SettingsManager {
                 System.exit(0);
             }
             FileWriter writer = new FileWriter(settings);
-            writer.write("{FPL_Version=\"V0\"}");
+            writer.write("{FPL_Version=\"V0\",IDE_Version=\"V0\"}");
             writer.close();
             return settings;
         }

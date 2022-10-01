@@ -1,5 +1,7 @@
 package com.github.PastaLaPate.FPL_IDE.fpl;
 
+import com.github.PastaLaPate.FPL_IDE.ui.panels.TopBar;
+
 import javax.swing.*;
 
 public class Result{
@@ -17,6 +19,7 @@ public class Result{
         f.setSize(500, 800);
         f.setLocationRelativeTo(null);
         f.setVisible(true);
+        f.setJMenuBar(new TopBar(f, null, null, null).createMenuBar(false));
     }
 
     public void addLine(String line) {

@@ -2,6 +2,7 @@ package com.github.PastaLaPate.FPL_IDE.util.downloader;
 
 import com.github.PastaLaPate.FPL_IDE.MainPanel;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
+import com.github.PastaLaPate.FPL_IDE.ui.panels.TopBar;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,13 +24,30 @@ public class DownloadScreen {
         progressBar.setStringPainted(true);
         j.add(progressBar);
         j.setSize(new Dimension(400, 400));
-        j.setVisible(true);
         j.setLocationRelativeTo(null);
+        j.setUndecorated(true);
+        j.setJMenuBar(new TopBar(j, null, null, null).createMenuBar(false));
+        j.setVisible(true);
     }
 
-    public void download() throws IOException {
+    public void downloadIDE() throws IOException {
         Downloader downloader = new Downloader();
-        downloader.initDownload(e -> {
+        downloader.initDownloadIDE(e -> {
+            progressBar.setString("Downloading " + e.getFileName() + " " + e.getFileNumber() + "/" + e.getMaxfiles());
+            progressBar.setValue(e.getFileNumber() / e.getMaxfiles());
+            if (e.getFileNumber() == e.getMaxfiles()) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.log(ex);
+                }
+            }
+        });
+    }
+
+    public void downloadFPL() throws IOException {
+        Downloader downloader = new Downloader();
+        downloader.initDownloadFPL(e -> {
             progressBar.setString("Downloading " + e.getFileName() + " " + e.getFileNumber() + "/" + e.getMaxfiles());
             progressBar.setValue(e.getFileNumber() / e.getMaxfiles());
             if (e.getFileNumber() == e.getMaxfiles()) {
