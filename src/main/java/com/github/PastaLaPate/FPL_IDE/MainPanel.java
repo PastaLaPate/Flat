@@ -80,6 +80,7 @@ public class MainPanel extends JFrame{
             scrollPane.setMaximumSize(new Dimension(400, Integer.MAX_VALUE));
 
             setContentPane(splitPane);
+            pack();
             makeMaximized();
             scrollPane.add(tPane);
             setVisible(true);
@@ -87,6 +88,16 @@ public class MainPanel extends JFrame{
     }
 
     public void makeMaximized() {
+        setSize(getMaxSize());
+        setLocationRelativeTo(null);
+    }
+
+    public Dimension getDefaultSize() {
+        Dimension dimension = getMaxSize();
+        return dimension;
+    }
+
+    public Dimension getMaxSize() {
         // Gets the screen resolution
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         // Gets the width and height
@@ -95,7 +106,6 @@ public class MainPanel extends JFrame{
         //height of the task bar
         Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
         int taskBarSize = scnMax.bottom;
-        setSize((int)width, (int)height - taskBarSize);
-        pack();
+        return new Dimension((int) width, (int) (height - taskBarSize));
     }
 }

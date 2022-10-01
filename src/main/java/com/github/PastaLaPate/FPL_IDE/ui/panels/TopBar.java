@@ -236,9 +236,10 @@ public class TopBar {
             maximizeButton.addActionListener(e -> {
                 Logger.log("Maximizing app", this.getClass(), Level.INFO);
                 if (f.getExtendedState() == 0) {
-                    f.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                    mainPanel.makeMaximized();
                 } else {
                     f.setExtendedState(0);
+                    f.setSize(1920/2, 1080/2);
                     f.setState(Frame.NORMAL);
                 }
                 splitPane.updateUI();
