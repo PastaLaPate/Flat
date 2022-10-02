@@ -3,6 +3,7 @@ package com.github.PastaLaPate.FPL_IDE.util.downloader;
 import com.github.PastaLaPate.FPL_IDE.Main;
 import com.github.PastaLaPate.FPL_IDE.SettingsManager;
 import com.github.PastaLaPate.FPL_IDE.interfaces.listeners.DownloadHandler;
+import com.github.PastaLaPate.FPL_IDE.ui.panels.utils.Alert;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Level;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
 import com.google.gson.JsonArray;
@@ -27,23 +28,31 @@ public class Downloader {
         if (isLastedVersionIDE(jsonObject.getAsJsonObject())) {
             Logger.log("Lasted version are already installed", this.getClass(), Level.INFO);
             downloadHandler.fileDownloaded(new DownloadEvent("Finished", 1, 1));
-            return;
+        } else {
+            new Alert("New version of IDE detected ! \n Do you want download the new version ?", e -> {
+                if (e.getConfirmed()) {
+                    try {
+                        Logger.log("Downloading new version", this.getClass(), Level.INFO);
+                        String assetsUrl = jsonObject.getAsJsonObject().get("assets_url").getAsString();
+                        JsonArray assets = getResulfOfUrl(assetsUrl).getAsJsonArray();
+                        int i = 0;
+                        for (JsonElement jsonElement : assets) {
+                            String browserDownloadUrl = jsonElement.getAsJsonObject().get("browser_download_url").getAsString();
+                            String name = jsonElement.getAsJsonObject().get("name").getAsString();
+                            downloadFile(browserDownloadUrl, name, getPathOfJar());
+                            i++;
+                            downloadHandler.fileDownloaded(new DownloadEvent(name, i, assets.size()));
+                        }
+                        SettingsManager settingsManager = new SettingsManager();
+                        JsonObject finalSettings = settingsManager.getSettingsJson().getAsJsonObject();
+                        finalSettings.add("IDE_Version", jsonObject.getAsJsonObject().get("tag_name"));
+                        settingsManager.setSettingsFile(finalSettings);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
         }
-        Logger.log("Downloading new version", this.getClass(), Level.INFO);
-        String assetsUrl = jsonObject.getAsJsonObject().get("assets_url").getAsString();
-        JsonArray assets = getResulfOfUrl(assetsUrl).getAsJsonArray();
-        int i = 0;
-        for (JsonElement jsonElement : assets) {
-            String browserDownloadUrl = jsonElement.getAsJsonObject().get("browser_download_url").getAsString();
-            String name = jsonElement.getAsJsonObject().get("name").getAsString();
-            downloadFile(browserDownloadUrl, name, getPathOfJar());
-            i++;
-            downloadHandler.fileDownloaded(new DownloadEvent(name, i, assets.size()));
-        }
-        SettingsManager settingsManager = new SettingsManager();
-        JsonObject finalSettings = settingsManager.getSettingsJson().getAsJsonObject();
-        finalSettings.add("IDE_Version", jsonObject.getAsJsonObject().get("tag_name"));
-        settingsManager.setSettingsFile(finalSettings);
     }
 
     public void initDownloadFPL(DownloadHandler downloadHandler) throws IOException {
@@ -54,21 +63,27 @@ public class Downloader {
             downloadHandler.fileDownloaded(new DownloadEvent("Finished", 1, 1));
             return;
         }
-        Logger.log("Downloading new version", this.getClass(), Level.INFO);
-        String assetsUrl = jsonObject.getAsJsonObject().get("assets_url").getAsString();
-        JsonArray assets = getResulfOfUrl(assetsUrl).getAsJsonArray();
-        int i = 0;
-        for (JsonElement jsonElement : assets) {
-            String browserDownloadUrl = jsonElement.getAsJsonObject().get("browser_download_url").getAsString();
-            String name = jsonElement.getAsJsonObject().get("name").getAsString();
-            downloadFile(browserDownloadUrl, name, getPathFolder());
-            i++;
-            downloadHandler.fileDownloaded(new DownloadEvent(name, i, assets.size()));
-        }
-        SettingsManager settingsManager = new SettingsManager();
-        JsonObject finalSettings = settingsManager.getSettingsJson().getAsJsonObject();
-        finalSettings.add("FPL_Version", jsonObject.getAsJsonObject().get("tag_name"));
-        settingsManager.setSettingsFile(finalSettings);
+        new Alert("New version of FPL detected ! \n Do you want download the new version ?", response -> {
+            try {
+                Logger.log("Downloading new version", this.getClass(), Level.INFO);
+                String assetsUrl = jsonObject.getAsJsonObject().get("assets_url").getAsString();
+                JsonArray assets = getResulfOfUrl(assetsUrl).getAsJsonArray();
+                int i = 0;
+                for (JsonElement jsonElement : assets) {
+                    String browserDownloadUrl = jsonElement.getAsJsonObject().get("browser_download_url").getAsString();
+                    String name = jsonElement.getAsJsonObject().get("name").getAsString();
+                    downloadFile(browserDownloadUrl, name, getPathFolder());
+                    i++;
+                    downloadHandler.fileDownloaded(new DownloadEvent(name, i, assets.size()));
+                }
+                SettingsManager settingsManager = new SettingsManager();
+                JsonObject finalSettings = settingsManager.getSettingsJson().getAsJsonObject();
+                finalSettings.add("FPL_Version", jsonObject.getAsJsonObject().get("tag_name"));
+                settingsManager.setSettingsFile(finalSettings);
+            } catch (IOException e) {
+                Logger.log(e);
+            }
+        });
     }
 
     public JsonElement getResulfOfUrl(String urla) throws IOException {

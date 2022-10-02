@@ -11,19 +11,33 @@ public class EditorTabsPanel extends JTabbedPane {
 
     public EditorTabsPanel() {
       super();
+      UIManager.put("TabbedPane.selected", Constants.ELEMENT1);
+      UIManager.put("TabbedPane.selectedForeground", Constants.TEXT);
       setBackground(Constants.BACKGROUND);
       setForeground(Constants.TEXT);
+      SwingUtilities.updateComponentTreeUI(this);
     }
 
     public String getCurrentFileContent() {
-        TextEditor currenttab = (TextEditor) getTabComponentAt(getSelectedIndex());
+        TextEditor currenttab = (TextEditor) getComponentAt(getSelectedIndex());
         return currenttab.getText();
     }
 
     public void openFile(File file) {
-        TextEditor tab = new TextEditor();
-        tab.loadFile(file);
-        addTab(file.getName(), tab);
+        if (!opened(file) && !file.getName().contains("📁")) {
+            TextEditor tab = new TextEditor();
+            tab.loadFile(file);
+            addTab(file.getName(), tab);
+        }
+    }
+
+    public boolean opened(File file) {
+        for (TextEditor editor : getTabs()) {
+            if (editor.getCurrentfile().getName().equals(file.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<TextEditor> getTabs() {

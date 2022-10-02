@@ -1,6 +1,7 @@
 package com.github.PastaLaPate.FPL_IDE.interfaces.listeners;
 
+import com.github.PastaLaPate.FPL_IDE.interfaces.IAlertResponse;
+
 public interface IAlertListener {
-    void yesPressed();
-    void noPressed();
+    void buttonPressed(IAlertResponse response);
 }

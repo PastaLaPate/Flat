@@ -5,6 +5,7 @@ import com.github.PastaLaPate.FPL_IDE.MainPanel;
 import com.github.PastaLaPate.FPL_IDE.fpl.Runner;
 import com.github.PastaLaPate.FPL_IDE.ui.panels.Files.Files;
 import com.github.PastaLaPate.FPL_IDE.ui.panels.utils.About;
+import com.github.PastaLaPate.FPL_IDE.ui.panels.utils.FrameUtil;
 import com.github.PastaLaPate.FPL_IDE.util.Saver;
 import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Level;
@@ -14,6 +15,9 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
@@ -21,10 +25,12 @@ import java.util.Objects;
 public class TopBar {
 
     private final MainPanel mainPanel;
-    private String currentFileName = "main.fpl";
+    public String currentFileName = "main.fpl";
     private final JFrame f;
     private final Files files;
     private JSplitPane splitPane;
+    private final Point point = new Point();
+
     public TopBar(JFrame f, Files files, MainPanel mainPanel) {
         this.f = f;
         this.files = files;
@@ -150,28 +156,12 @@ public class TopBar {
         fileDialog.setVisible(true);
         String file = fileDialog.getFile();
         File file1;
-        Logger.log(fileDialog.getDirectory());
-        Logger.log(file);
         if (file != null) {
-            file1 = new File(file);
+            file1 = new File(fileDialog.getDirectory() + file);
             mainPanel.editorTabsPanel.openFile(file1);
             currentFileName = file1.getName();
             files.addFile(currentFileName);
         }
-    }
-
-    public void loadFile(String fileName) {
-
-        //LOAD NEW FILE
-        File file1;
-        try {
-            file1 = new File(Downloader.getPathFolder() + fileName);
-            mainPanel.editorTabsPanel.openFile(file1);
-            currentFileName = fileName;
-        } catch (IOException e) {
-            Logger.log(e);
-        }
-
     }
 
     public void makeElement1(JMenuItem menuItem) {
@@ -215,9 +205,9 @@ public class TopBar {
             maximizeButton.addActionListener(e -> {
                 Logger.log("Maximizing app", this.getClass(), Level.INFO);
                 if (f.getExtendedState() == 0) {
-                    mainPanel.makeMaximized();
+                    FrameUtil.makeMaximized(f);
                 } else {
-                    mainPanel.makeDeufaultSize();
+                    FrameUtil.makeDefaultSize(f);
                 }
                 splitPane.updateUI();
             });
@@ -240,6 +230,18 @@ public class TopBar {
             menuBar.add(createFileMenu());
             menuBar.add(createEditMenu());
         }
+        f.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                point.x = e.getX();
+                point.y = e.getY();
+            }
+        });
+        f.addMouseMotionListener(new MouseMotionAdapter() {
+            public void mouseDragged(MouseEvent e) {
+                Point p = f.getLocation();
+                f.setLocation(p.x + e.getX() - point.x, p.y + e.getY() - point.y);
+            }
+        });
         menuBar.add(Box.createHorizontalGlue());
         menuBar.add(minimizeButton);
         menuBar.add(maximizeButton);

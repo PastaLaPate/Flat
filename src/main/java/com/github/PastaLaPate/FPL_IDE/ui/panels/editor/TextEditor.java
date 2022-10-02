@@ -14,7 +14,13 @@ import java.io.IOException;
 
 public class TextEditor extends JTextPane {
 
+    /*
+    * The syntax highlighter used to highlight the code
+    * */
     private final Syntax syntax = new Syntax();
+    /*
+    * The saver to save files
+    * */
     private final Saver saver = new Saver();
     private File currentfile;
 
@@ -23,12 +29,14 @@ public class TextEditor extends JTextPane {
         setEditable(true);
         setBackground(Constants.BACKGROUND);
         setCaretColor(Constants.TEXT);
+        setFont(new Font("Monospaced",Font.BOLD,20));
         setForeground(Constants.TEXT);
         addKeyListener(new DefaultTextEditorKeyListener(this));
     }
 
     public void loadFile(File file) {
         currentfile = file;
+        Logger.log("PATH : " + file.getPath());
         try {
             setText(saver.getFile(file.getPath()));
         } catch (IOException e) {
