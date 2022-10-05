@@ -50,7 +50,6 @@ public class MainPanel extends JFrame{
             setJMenuBar(topBar.createMenuBar(true));
 
             //LOAD FILE
-            ScrollPane sPane = files.init(this);
             files.setListener(fileName -> {
                 //LOAD NEW FILE
                 File file1;
@@ -64,6 +63,12 @@ public class MainPanel extends JFrame{
                     Logger.log(e);
                 }
             });
+            ScrollPane sPane = files.init(this);
+            try {
+                files.setFolder(Downloader.getPathFolder());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sPane, editorTabsPanel);
             splitPane.setOneTouchExpandable(true);
             splitPane.setDividerLocation(100);

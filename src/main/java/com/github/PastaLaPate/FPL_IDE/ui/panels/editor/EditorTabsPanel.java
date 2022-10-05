@@ -24,7 +24,7 @@ public class EditorTabsPanel extends JTabbedPane {
     }
 
     public void openFile(File file) {
-        if (!opened(file) && !file.getName().contains("📁")) {
+        if (!opened(file) && !file.getName().contains("\ud83d\udcc1")) {
             TextEditor tab = new TextEditor();
             tab.loadFile(file);
             addTab(file.getName(), tab);

@@ -160,7 +160,6 @@ public class TopBar {
             file1 = new File(fileDialog.getDirectory() + file);
             mainPanel.editorTabsPanel.openFile(file1);
             currentFileName = file1.getName();
-            files.addFile(currentFileName);
         }
     }
 

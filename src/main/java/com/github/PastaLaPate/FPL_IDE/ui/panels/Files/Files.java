@@ -2,9 +2,11 @@ package com.github.PastaLaPate.FPL_IDE.ui.panels.Files;
 
 import com.github.PastaLaPate.FPL_IDE.Constants;
 import com.github.PastaLaPate.FPL_IDE.interfaces.listeners.FilePaneListener;
+import com.github.PastaLaPate.FPL_IDE.interfaces.renderer.FilesRenderer;
 import com.github.PastaLaPate.FPL_IDE.util.downloader.Downloader;
 import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
@@ -13,14 +15,27 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Files {
 
     private FilePaneListener listener;
     private ScrollPane sPane;
-    private JList<Object> list;
-    private List<String> strings;
-    private int selection;
+    private DefaultListModel<CustomFile> list;
+    private JList<CustomFile> jList;
+
+    public static final Icon folder_icon;
+
+    public static final Icon file_icon;
+
+    static {
+        try {
+            folder_icon = new ImageIcon(ImageIO.read(Objects.requireNonNull(Files.class.getClassLoader().getResource("img/folder.png"))).getScaledInstance(16,16, Image.SCALE_SMOOTH));
+            file_icon = new ImageIcon(ImageIO.read(Objects.requireNonNull(Files.class.getClassLoader().getResource("img/file.png"))).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public void setListener(FilePaneListener listener) {
         this.listener = listener;
@@ -29,8 +44,14 @@ public class Files {
     public ScrollPane init(JFrame f) {
         sPane = new ScrollPane();
         sPane.setSize(new Dimension(100, f.getHeight()));
-        list = new JList<>();
-        strings = new ArrayList<>();
+        jList = new JList<>();
+        list = new DefaultListModel<>();
+        jList.setCellRenderer(new FilesRenderer(listener));
+        try {
+            list.addElement(new CustomFile(new File(Downloader.getPathFolder() + "main.fpl")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         f.addComponentListener(new ComponentListener() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -44,44 +65,24 @@ public class Files {
             @Override
             public void componentHidden(ComponentEvent e) {}
         });
-        list.setForeground(Constants.TEXT);
-        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list.setDragEnabled(false);
-        list.setSelectedIndex(0);
-        list.setSize(100, f.getHeight());
-        list.addListSelectionListener(e -> {
-            if (selection == list.getSelectedIndex()) {
-                listener.fileClicked((String) list.getSelectedValue());
-            } else {
-                selection = list.getSelectedIndex();
-            }
-        });
-        list.setBackground(Constants.BACKGROUND);
-        try {
-            setFolder(Downloader.getPathFolder());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        list.setListData(strings.toArray());
-        list.setFont(new Font("Monospaced",Font.BOLD,9));
-        sPane.add(list);
-        sPane.setBackground(Constants.BACKGROUND);
-        sPane.setVisible(true);
+
+        jList.setModel(list);
+        sPane.add(jList);
         return sPane;
     }
 
     public void setFolder(String path) {
-        strings.clear();
+        list.clear();
         addAllOfFolder(path, true, 0);
-        list.setListData(strings.toArray());
+        jList.updateUI();
     }
 
     public void addAllOfFolder(String path, boolean pathOfFolders, int numOfFolder0) {
         File directory = new File(path);
         if (pathOfFolders) {
-            strings.add("📁" + directory.getPath());
+            addFile(new CustomFile(new File(directory.getPath())));
         } else {
-            strings.add("📁" + directory.getName());
+            addFile(new CustomFile(new File(directory.getName())));
         }
         List<File> files = getAllFilesOfDirectory(directory);
         for (File file : files) {
@@ -89,9 +90,9 @@ public class Files {
                 addAllOfFolder(file.getPath(), false, numOfFolder0 + 1);
             } else {
                 if (numOfFolder0 != 0) {
-                    strings.add("  ".repeat(Math.max(0, numOfFolder0)) + "📄" + file.getName());
+                    addFile(new CustomFile(file, numOfFolder0));
                 } else {
-                    strings.add("📄" + file.getName());
+                    addFile(new CustomFile(file));
                 }
             }
         }
@@ -109,9 +110,15 @@ public class Files {
         return files;
     }
 
-    public void addFile(String fileName) {
-        strings.add(fileName);
-        list.setListData(strings.toArray());
+    public void addFile(CustomFile f) {
+        list.addElement(f);
     }
 
+    public List<CustomFile> getFiles() {
+        List<CustomFile> r = new ArrayList<>();
+        for (int i = 0; i < list.getSize(); i++) {
+            r.add(list.getElementAt(i));
+        }
+        return r;
+    }
 }
