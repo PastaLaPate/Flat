@@ -1,6 +1,7 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'java'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
@@ -17,6 +18,11 @@ shadowJar {
     archiveClassifier.set('')
     archiveVersion.set('v0.3.1-alpha')
     configurations = [project.configurations.compileClasspath]
+}
+
+javafx {
+    version = "19"
+    modules = ["javafx.controls"]
 }
 
 jar {
