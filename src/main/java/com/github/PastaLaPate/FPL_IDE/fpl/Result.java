@@ -4,7 +4,7 @@ import com.github.PastaLaPate.FPL_IDE.util.panels.TopBar;
 
 import javax.swing.*;
 
-public class Result{
+public class Result{/*
 
     private JLabel label;
 
@@ -24,5 +24,5 @@ public class Result{
 
     public void addLine(String line) {
         label.setText(label.getText() + "<br>" + line);
-    }
+    }*/
 }

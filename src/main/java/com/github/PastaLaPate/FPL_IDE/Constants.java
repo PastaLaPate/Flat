@@ -1,10 +1,10 @@
 package com.github.PastaLaPate.FPL_IDE;
 
-import java.awt.*;
+import javafx.scene.paint.Color;
 
 public class Constants {
-    public static final Color BACKGROUND = new Color(39, 39, 39);
-    public static final Color ELEMENT1 = new Color(47, 47, 47);
+    public static final Color BACKGROUND = Color.rgb(39, 39, 39);
+    public static final Color ELEMENT1 = Color.rgb(47, 47, 47);
     //public static final Color ELEMENT2 = new Color(54, 54, 54);
-    public static final Color TEXT = new Color(200, 200, 200);
+    public static final Color TEXT = Color.rgb(200, 200, 200);
 }

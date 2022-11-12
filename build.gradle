@@ -1,12 +1,18 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'java'
+    id 'application'
+    id 'idea'
     id 'org.openjfx.javafxplugin' version '0.0.13'
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'java'
-apply plugin: 'application'
+
+
+javafx {
+    version = "19"
+    modules = [ 'javafx.controls', 'javafx.base', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web' ]
+}
 
 group 'fr.PastaLaPate'
 version '1.0-alpha'
@@ -19,12 +25,6 @@ shadowJar {
     archiveVersion.set('v0.3.1-alpha')
     configurations = [project.configurations.compileClasspath]
 }
-
-javafx {
-    version = "19"
-    modules = ["javafx.controls"]
-}
-
 jar {
     manifest {
         attributes 'Main-Class': mainClassName
@@ -41,6 +41,12 @@ dependencies {
     implementation 'commons-io:commons-io:2.11.0'
     implementation 'org.jetbrains:annotations:23.0.0'
     implementation 'com.jfoenix:jfoenix:9.0.10'
+
+}
+
+
+application {
+    getMainClass().set("com.github.PastaLaPate.FPL_IDE.Main")
 }
 
 test {

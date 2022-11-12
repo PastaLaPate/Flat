@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Files {
-
+/*
     private FilePaneListener listener;
     private ScrollPane sPane;
     private JList<Object> list;
@@ -65,6 +65,6 @@ public class Files {
 
     public List<String> getFiles() {
         return strings;
-    }
+    }*/
 
 }

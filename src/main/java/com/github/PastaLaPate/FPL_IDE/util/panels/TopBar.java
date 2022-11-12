@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class TopBar {
+    /*
 
     private final MainPanel mainPanel;
     private String currentFileName = "main.fpl";
@@ -44,7 +45,7 @@ public class TopBar {
         JMenuItem pasteItem = new JMenuItem("Paste");
         makeElement1(pasteItem);
         editMenu.add(pasteItem);
-        editMenu.setForeground(Constants.TEXT);
+        editMenu.setForeground(new Color((int) Constants.TEXT.getRed(), (int) Constants.TEXT.getGreen(), (int) Constants.TEXT.getBlue()));
         removeBorder(editMenu);
         return editMenu;
     }
@@ -95,7 +96,7 @@ public class TopBar {
         });
         makeElement1(aboutItem);
         fileMenu.add(aboutItem);
-        fileMenu.setForeground(Constants.TEXT);
+        fileMenu.setForeground(new Color((int) Constants.TEXT.getRed(), (int) Constants.TEXT.getGreen(), (int) Constants.TEXT.getBlue()));
         removeBorder(fileMenu);
         return fileMenu;
     }
@@ -192,8 +193,8 @@ public class TopBar {
     }
 
     public void makeElement1(JMenuItem menuItem) {
-        menuItem.setForeground(Constants.TEXT);
-        menuItem.setBackground(Constants.ELEMENT1);
+        menuItem.setForeground(new Color((int) Constants.TEXT.getRed(), (int) Constants.TEXT.getGreen(), (int) Constants.TEXT.getBlue()));
+        menuItem.setBackground(new Color((int) Constants.TEXT.getRed(), (int) Constants.TEXT.getGreen(), (int) Constants.TEXT.getBlue()));
         removeBorder(menuItem);
     }
 
@@ -263,4 +264,6 @@ public class TopBar {
         menuBar.add(closeButton);
         return menuBar;
     }
+}*/
+
 }

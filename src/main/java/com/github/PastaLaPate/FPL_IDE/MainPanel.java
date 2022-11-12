@@ -16,7 +16,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
 public class MainPanel extends JFrame{
-
+    /*
     private JTextPane tPane;
     private JFrame f;
     private TopBar topBar;
@@ -205,5 +205,5 @@ public class MainPanel extends JFrame{
         StyleConstants.setTabSet(attributes, tabSet);
         int length = textPane.getDocument().getLength();
         textPane.getStyledDocument().setParagraphAttributes(0, length, attributes, false);
-    }
+    }*/
 }

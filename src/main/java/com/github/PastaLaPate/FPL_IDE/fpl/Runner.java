@@ -26,7 +26,7 @@ public class Runner {
         String command = Downloader.getPathFolder() + program_File + Downloader.getPathFolder() + "main.fpl" ;
         Logger.log("launching with command : " + command, this.getClass(), Level.INFO);
         Result result = new Result();
-        result.init();
+        //result.init();
         try {
             // Use a ProcessBuilder
             ProcessBuilder pb = new ProcessBuilder(Downloader.getPathFolder() + program_File, Downloader.getPathFolder() + "main.fpl");
@@ -36,11 +36,11 @@ public class Runner {
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             String line;
             while ((line = br.readLine()) != null) {
-                result.addLine(line);
+          //      result.addLine(line);
                 Logger.log("FPL : " + line, this.getClass(), Level.INFO);
             }
             p.waitFor(); // Let the process finish.
-            result.addLine("Finished");
+            //result.addLine("Finished");
         } catch (Exception e) {
             Logger.log(e);
         }
