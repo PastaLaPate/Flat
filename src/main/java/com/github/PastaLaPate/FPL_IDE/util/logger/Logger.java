@@ -1,4 +1,4 @@
-package com.github.PastaLaPate.FPL_IDE.util.logger;
+package com.github.PastaLaPate.FPL_IDE.util.Logger;
 
 import java.io.IOException;
 

@@ -1,6 +1,6 @@
 package com.github.PastaLaPate.FPL_IDE.util;
 
-import com.github.PastaLaPate.FPL_IDE.util.logger.Logger;
+import com.github.PastaLaPate.FPL_IDE.util.Logger.Logger;
 
 import java.io.*;
 import java.util.List;

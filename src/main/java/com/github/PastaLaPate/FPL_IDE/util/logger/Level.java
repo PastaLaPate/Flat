@@ -1,4 +1,4 @@
-package com.github.PastaLaPate.FPL_IDE.util.logger;
+package com.github.PastaLaPate.FPL_IDE.util.Logger;
 
 public class Level {
     public static final Level INFO = new Level("[INFO] ");
