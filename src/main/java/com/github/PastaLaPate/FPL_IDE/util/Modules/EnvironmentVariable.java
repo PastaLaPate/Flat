@@ -7,8 +7,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +39,6 @@ public class EnvironmentVariable {
             args.append(" ").append(arg);
         }
         String command = path + filename + " " + args;
-        /*
         try {
             Process process = Runtime.getRuntime().exec(command);
             BufferedReader output_reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -52,9 +49,7 @@ public class EnvironmentVariable {
             return output.toString();
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }*/
-        Logger.log(command);
-        return "";
+        }
     }
 
     public String get(String name) {
@@ -67,7 +62,7 @@ public class EnvironmentVariable {
     public void addToPath(String value) {
         String PathE = get("Path");
         PathE = PathE + ";" + value;
-        addLocal("Path", value);
+        addLocal("Path", PathE);
     }
 
     public void addLocal(String name, String value) {
@@ -75,6 +70,7 @@ public class EnvironmentVariable {
         args.add("-al");
         args.add(name);
         args.add(value);
+        Logger.log(args);
         execute(args);
     }
 

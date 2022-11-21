@@ -9,7 +9,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            Class.forName("javafx.application.Application");
+            Class.forName("javafxx.application.Application");
             Application.launch(Launcher.class, args);
         } catch (ClassNotFoundException e) {
             new MessageBox().addViewMessage("JAVAFX not installed");

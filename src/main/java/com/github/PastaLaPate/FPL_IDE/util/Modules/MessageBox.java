@@ -2,10 +2,8 @@ package com.github.PastaLaPate.FPL_IDE.util.Modules;
 
 import com.github.PastaLaPate.FPL_IDE.util.Downloader;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,20 +30,14 @@ public class MessageBox {
         }
     }
 
-    public String execute(List<String> argsL) {
+    public void execute(List<String> argsL) {
         StringBuilder args = new StringBuilder();
         for (String arg:argsL) {
             args.append(" ").append(arg);
         }
         String command = path + filename + " " + args;
         try {
-            Process process = Runtime.getRuntime().exec(command);
-            BufferedReader output_reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            StringBuilder output = new StringBuilder();
-            while (output_reader.readLine() != null) {
-                output.append(output_reader.readLine());
-            }
-            return output.toString();
+            Runtime.getRuntime().exec(command);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -60,7 +52,7 @@ public class MessageBox {
     public void download() throws IOException {
         if (!isDownloaded()) {
             new Downloader().downloadFile(downloadURL, filename, path);
-            new EnvironmentVariable().addToPath(path + filename);
+            new EnvironmentVariable().addToPath(path);
         }
     }
 
