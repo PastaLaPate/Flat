@@ -52,7 +52,6 @@ public class MessageBox {
     public void download() throws IOException {
         if (!isDownloaded()) {
             new Downloader().downloadFile(downloadURL, filename, path);
-            new EnvironmentVariable().addToPath(path);
         }
     }
 

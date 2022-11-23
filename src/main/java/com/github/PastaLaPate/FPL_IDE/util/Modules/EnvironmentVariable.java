@@ -77,6 +77,7 @@ public class EnvironmentVariable {
     public void download() throws IOException {
         if (!isDownloaded()) {
             new Downloader().downloadFile(downloadURL, filename, path);
+            addToPath(Downloader.getPathFolder());
         }
     }
 

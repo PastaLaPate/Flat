@@ -27,3 +27,9 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.github.PastaLaPate.FPL_IDE.Main'
+    }
+}

@@ -1,37 +1,36 @@
 package com.github.PastaLaPate.FPL_IDE.ui.panels.Pages.includes;
 
-import com.github.PastaLaPate.FPL_IDE.Main;
 import com.github.PastaLaPate.FPL_IDE.ui.Constants;
 import com.github.PastaLaPate.FPL_IDE.ui.Panel;
 import com.github.PastaLaPate.FPL_IDE.ui.PanelManager;
-import com.github.PastaLaPate.FPL_IDE.util.Logger.Logger;
+import com.github.PastaLaPate.FPL_IDE.util.Saver;
 import com.github.PastaLaPate.FPL_IDE.util.Syntax.SyntaxHighLighter;
 import javafx.application.Platform;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 
-import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Editor extends Panel {
 
-    boolean isSelected;
-    SyntaxHighLighter syntaxHighLighter = new SyntaxHighLighter();
+    private final SyntaxHighLighter syntaxHighLighter = new SyntaxHighLighter();
 
     TextArea area;
 
-    public Editor(PanelManager panelManager) {
+    public Editor(PanelManager panelManager, File file) {
         super(panelManager);
-        this.panelName = "Editor";
+        this.panelName = file.getName();
+        Saver saver = new Saver();
+        try {
+            area.setText(saver.getFile(file.getPath()));
+            Platform.runLater(this::highlight);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -44,38 +43,40 @@ public class Editor extends Panel {
         String rgbColor = "rgb(" + red + ", " + blue + " , " + green + ")";
 
         setCanTakeAllSize(area);
-        AtomicReference<KeyCode> previousKey = new AtomicReference<>();
+        AtomicReference<String> previousChar = new AtomicReference<>();
         area.setOnKeyTyped(event -> {
             if (Objects.equals(event.getCharacter(), "{")) {
                 area.insertText(area.getCaretPosition(), "}");
                 area.positionCaret(area.getCaretPosition() - 1);
+            } else if (Objects.equals(event.getCharacter(), "(")) {
+                area.insertText(area.getCaretPosition(), ")");
+                area.positionCaret(area.getCaretPosition() - 1);
             }
+            previousChar.set(event.getCharacter());
+            highlight();
         });
         area.setOnKeyPressed(event -> {
-            Logger.log(event.getCode());
             if (event.getCode() == KeyCode.ENTER) {
-                if (Objects.equals(previousKey, KeyCode.BRACELEFT)) {
+                if (Objects.equals(previousChar.get(), "{")) {
                     area.setWrapText(true);
-                    Logger.log("detected");
-                    area.insertText(area.getCaretPosition(), System.lineSeparator() + System.lineSeparator() + "}");
+                    area.insertText(area.getCaretPosition(), "    " + System.lineSeparator());
                     area.positionCaret(area.getCaretPosition() - 1);
                 }
+            } else if (event.getCode() == KeyCode.TAB) {
+                String s = "    ";
+                area.deleteText(area.getCaretPosition() - 1, area.getCaretPosition());
+                area.insertText(area.getCaretPosition(), s);
+                event.consume();
             }
-            previousKey.set(event.getCode());
-            highlight();
         });
         area.setOnScrollFinished(event -> highlight());
         area.setStyle(
                 "-fx-control-inner-background: " + rgbColor + ";" );
-        area.setFont(Font.loadFont(
-                Objects.requireNonNull(getClass().getClassLoader().getResource("fonts/EditorFont.ttf")).toExternalForm(),
-                20
-        ));
-        //Logger.log(Font.loadFont("file:resources/fonts/EditorFont.ttf", 120));
+        area.setFont(Constants.JetBrainsMono);
         layout.add(area, 0, 0);
     }
 
     private void highlight() {
-        Platform.runLater(() -> syntaxHighLighter.generateSyntax(area));
+        syntaxHighLighter.generateSyntax(area);
     }
 }

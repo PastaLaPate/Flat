@@ -28,8 +28,8 @@ public class MainPanel extends Panel {
         columnConstraints.setMaxWidth(400);
         this.layout.getColumnConstraints().addAll(columnConstraints, new ColumnConstraints());
 
-        Files files = new Files(panelManager);
         EditorViewer editorViewer = new EditorViewer(panelManager);
+        Files files = new Files(panelManager,  editorViewer);
         layout.add(files.getLayout(), 0, 0);
         layout.add(editorViewer.getLayout(), 1, 0);
         setCanTakeAllSize(files.getLayout());
