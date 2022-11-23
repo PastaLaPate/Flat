@@ -44,7 +44,12 @@ public class EditorViewer extends Panel {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Console console = new Console(panelManager);
+        Console console;
+        try {
+            console = new Console(panelManager);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         tabPane = new TabPane();
         tabPane.getTabs().add(new Tab("main.fpl", editor.getLayout()));
         layout.add(tabPane, 0, 0);
