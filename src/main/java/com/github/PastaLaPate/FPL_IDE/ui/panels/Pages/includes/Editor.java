@@ -18,12 +18,14 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Editor extends Panel {
 
     private final SyntaxHighLighter syntaxHighLighter = new SyntaxHighLighter();
+    private final File file;
 
     TextArea area;
 
     public Editor(PanelManager panelManager, File file) {
         super(panelManager);
         this.panelName = file.getName();
+        this.file = file;
         Saver saver = new Saver();
         try {
             area.setText(saver.getFile(file.getPath()));
@@ -74,6 +76,14 @@ public class Editor extends Panel {
                 "-fx-control-inner-background: " + rgbColor + ";" );
         area.setFont(Constants.JetBrainsMono);
         layout.add(area, 0, 0);
+    }
+
+    public String getText() {
+        return area.getText();
+    }
+
+    public File getFile() {
+        return file;
     }
 
     private void highlight() {

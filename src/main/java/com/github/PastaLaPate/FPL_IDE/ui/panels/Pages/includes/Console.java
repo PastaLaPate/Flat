@@ -3,6 +3,8 @@ package com.github.PastaLaPate.FPL_IDE.ui.panels.Pages.includes;
 import com.github.PastaLaPate.FPL_IDE.ui.Constants;
 import com.github.PastaLaPate.FPL_IDE.ui.Panel;
 import com.github.PastaLaPate.FPL_IDE.ui.PanelManager;
+import com.github.PastaLaPate.FPL_IDE.ui.panels.Partials.TopBar;
+import com.github.PastaLaPate.FPL_IDE.util.Downloader;
 import com.github.PastaLaPate.FPL_IDE.util.SyncPipe;
 import javafx.geometry.Insets;
 import javafx.scene.control.TextArea;
@@ -22,9 +24,22 @@ import java.util.Arrays;
 
 public class Console extends Panel {
 
+    static PrintWriter stdin;
+
     public Console(PanelManager panelManager) throws IOException {
         super(panelManager);
         this.panelName = "Console";
+    }
+
+    public static TopBar.RunHandler getRunHandler() {
+        return () -> {
+            try {
+                stdin.println("French_Programming_Language " + Downloader.getPathFolder() + "main.fpl");
+                stdin.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
     }
 
     @Override
@@ -32,7 +47,6 @@ public class Console extends Panel {
         super.initComponents();
         Process p;
         TextArea textArea = new TextArea();
-        PrintWriter stdin;
         try {
             String[] command =
                     {
@@ -58,7 +72,7 @@ public class Console extends Panel {
                 }
             };
 
-            new Thread(new SyncPipe(p.getErrorStream(), System.err)).start();
+            new Thread(new SyncPipe(p.getErrorStream(), out)).start();
             new Thread(new SyncPipe(p.getInputStream(), out)).start();
             stdin = new PrintWriter(p.getOutputStream());
         } catch (IOException e) {

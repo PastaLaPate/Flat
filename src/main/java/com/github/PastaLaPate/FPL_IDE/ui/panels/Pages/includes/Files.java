@@ -1,13 +1,18 @@
 package com.github.PastaLaPate.FPL_IDE.ui.panels.Pages.includes;
 
+import com.github.PastaLaPate.FPL_IDE.ui.Constants;
 import com.github.PastaLaPate.FPL_IDE.ui.Panel;
 import com.github.PastaLaPate.FPL_IDE.ui.PanelManager;
 import com.github.PastaLaPate.FPL_IDE.ui.panels.Pages.EditorViewer;
 import com.github.PastaLaPate.FPL_IDE.util.Downloader;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,9 +44,11 @@ public class Files extends Panel {
     public void initComponents() {
         super.initComponents();
         listViewReference = new ListView<>();
+        listViewReference.setBackground(new Background(new BackgroundFill(Constants.BACKGROUND, CornerRadii.EMPTY, Insets.EMPTY)));
         listViewReference.setOrientation(Orientation.VERTICAL);
         listViewReference.setCellFactory(param -> new ListCell<>(){
             private final ImageView imageView = new ImageView();
+
             @Override
             protected void updateItem(FileView item, boolean empty) {
                 super.updateItem(item, empty);
@@ -54,7 +61,9 @@ public class Files extends Panel {
                     imageView.setFitWidth(32);
                     setText(item.toString());
                     setGraphic(imageView);
+                    setFont(Constants.JetBrainsMono);
                 }
+                setStyle("-fx-background-color: transparent; -fx-text-fill: white;");
             }
         });
         listViewReference.setOnMouseClicked(event -> {

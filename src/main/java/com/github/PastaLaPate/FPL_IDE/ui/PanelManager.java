@@ -1,11 +1,14 @@
 package com.github.PastaLaPate.FPL_IDE.ui;
 
 import com.github.PastaLaPate.FPL_IDE.Main;
+import com.github.PastaLaPate.FPL_IDE.ui.panels.Pages.MainPanel;
+import com.github.PastaLaPate.FPL_IDE.ui.panels.Pages.includes.Console;
 import com.github.PastaLaPate.FPL_IDE.ui.panels.Partials.TopBar;
 import com.github.PastaLaPate.FPL_IDE.util.Platform;
 import com.goxr3plus.fxborderlessscene.borderless.BorderlessScene;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
@@ -16,6 +19,7 @@ public class PanelManager {
 
     private final Stage stage;
     private final GridPane contentPane = new GridPane();
+    TopBar topBar;
 
     public PanelManager(Stage stage) {
         this.stage = stage;
@@ -26,6 +30,7 @@ public class PanelManager {
         this.stage.setHeight(360.0D);
         this.stage.setResizable(true);
         this.stage.centerOnScreen();
+        this.stage.getIcons().add(new Image("images/logo.png"));
         this.stage.setOnCloseRequest(e -> System.exit(0));
 
         if (Platform.isOnLinux()) {
@@ -34,7 +39,7 @@ public class PanelManager {
         } else {
             this.stage.initStyle(StageStyle.UNDECORATED);
 
-            TopBar topBar = new TopBar(this);
+            topBar = new TopBar(this);
             BorderlessScene scene = new BorderlessScene(this.stage, StageStyle.UNDECORATED, layout);
             scene.setResizable(true);
             scene.setMoveControl(topBar.getLayout());
@@ -44,8 +49,8 @@ public class PanelManager {
 
             RowConstraints topPaneConstraints = new RowConstraints();
             topPaneConstraints.setValignment(VPos.TOP);
-            topPaneConstraints.setMinHeight(25);
-            topPaneConstraints.setMaxHeight(25);
+            topPaneConstraints.setMinHeight(50);
+            topPaneConstraints.setMaxHeight(100);
 
             layout.getRowConstraints().addAll(topPaneConstraints, new RowConstraints());
             layout.add(topBar.getLayout(), 0, 0);
@@ -69,6 +74,10 @@ public class PanelManager {
             stage.setTitle("FPL IDE " + Main.VERSION + " - " + panel.getPanelName());
             panel.getDimension().setStageDimension(stage);
             panel.onShow();
+            if (panel instanceof MainPanel) {
+                topBar.makeRunButtonEnabled(Console.getRunHandler());
+                topBar.makeSaveButtonEnabled();
+            }
         });
     }
 }
