@@ -15,6 +15,8 @@ import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.util.Objects;
+
 public class PanelManager {
 
     private final Stage stage;
@@ -35,6 +37,7 @@ public class PanelManager {
 
         if (Platform.isOnLinux()) {
             Scene scene = new Scene(layout);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getClassLoader().getResource("css/editor.css")).toExternalForm());
             this.stage.setScene(scene);
         } else {
             this.stage.initStyle(StageStyle.UNDECORATED);
@@ -44,6 +47,7 @@ public class PanelManager {
             scene.setResizable(true);
             scene.setMoveControl(topBar.getLayout());
             scene.removeDefaultCSS();
+            scene.getStylesheets().add(Objects.requireNonNull(Main.class.getClassLoader().getResource("css/editor.css")).toExternalForm());
 
             this.stage.setScene(scene);
 

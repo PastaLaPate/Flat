@@ -6,9 +6,13 @@ import com.github.PastaLaPate.FPL_IDE.ui.PanelManager;
 import com.github.PastaLaPate.FPL_IDE.util.Saver;
 import com.github.PastaLaPate.FPL_IDE.util.Syntax.SyntaxHighLighter;
 import javafx.application.Platform;
-import javafx.scene.control.TextArea;
+import javafx.geometry.Insets;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
+import org.fxmisc.richtext.CodeArea;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +24,7 @@ public class Editor extends Panel {
     private final SyntaxHighLighter syntaxHighLighter = new SyntaxHighLighter();
     private final File file;
 
-    TextArea area;
+    CodeArea area;
 
     public Editor(PanelManager panelManager, File file) {
         super(panelManager);
@@ -28,7 +32,7 @@ public class Editor extends Panel {
         this.file = file;
         Saver saver = new Saver();
         try {
-            area.setText(saver.getFile(file.getPath()));
+            area.replaceText(saver.getFile(file.getPath()));
             Platform.runLater(this::highlight);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -37,22 +41,18 @@ public class Editor extends Panel {
 
     @Override
     public void initComponents() {
-        area = new TextArea();
+        area = new CodeArea();
         Color color = Constants.BACKGROUND;
-        double red = color.getRed()*255;
-        double blue = color.getBlue()*255;
-        double green = color.getGreen()*255;
-        String rgbColor = "rgb(" + red + ", " + blue + " , " + green + ")";
 
         setCanTakeAllSize(area);
         AtomicReference<String> previousChar = new AtomicReference<>();
         area.setOnKeyTyped(event -> {
             if (Objects.equals(event.getCharacter(), "{")) {
                 area.insertText(area.getCaretPosition(), "}");
-                area.positionCaret(area.getCaretPosition() - 1);
+                area.moveTo(area.getCaretPosition() - 1);
             } else if (Objects.equals(event.getCharacter(), "(")) {
                 area.insertText(area.getCaretPosition(), ")");
-                area.positionCaret(area.getCaretPosition() - 1);
+                area.moveTo(area.getCaretPosition() - 1);
             }
             previousChar.set(event.getCharacter());
             highlight();
@@ -62,7 +62,7 @@ public class Editor extends Panel {
                 if (Objects.equals(previousChar.get(), "{")) {
                     area.setWrapText(true);
                     area.insertText(area.getCaretPosition(), "    " + System.lineSeparator());
-                    area.positionCaret(area.getCaretPosition() - 1);
+                    area.moveTo(area.getCaretPosition() - 1);
                 }
             } else if (event.getCode() == KeyCode.TAB) {
                 String s = "    ";
@@ -72,9 +72,8 @@ public class Editor extends Panel {
             }
         });
         area.setOnScrollFinished(event -> highlight());
-        area.setStyle(
-                "-fx-control-inner-background: " + rgbColor + ";" );
-        area.setFont(Constants.JetBrainsMono);
+        area.getStyleClass().add("codeArea");
+        area.setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
         layout.add(area, 0, 0);
     }
 
