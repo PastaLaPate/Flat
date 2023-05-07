@@ -5,6 +5,7 @@ import com.github.PastaLaPate.FPL_IDE.ui.Panel;
 import com.github.PastaLaPate.FPL_IDE.ui.PanelManager;
 import com.github.PastaLaPate.FPL_IDE.ui.panels.Partials.TopBar;
 import com.github.PastaLaPate.FPL_IDE.util.Downloader;
+import com.github.PastaLaPate.FPL_IDE.util.Logger.Logger;
 import com.github.PastaLaPate.FPL_IDE.util.SyncPipe;
 import javafx.geometry.Insets;
 import javafx.scene.control.TextArea;
@@ -20,11 +21,16 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public class Console extends Panel {
 
     static PrintWriter stdin;
+    private List<String> history;
+    private int numInHistory = 1;
 
     public Console(PanelManager panelManager) throws IOException {
         super(panelManager);
@@ -46,6 +52,8 @@ public class Console extends Panel {
     public void initComponents() {
         super.initComponents();
         Process p;
+        history = new ArrayList<>();
+        history.add("");
         TextArea textArea = new TextArea();
         try {
             String[] command =
@@ -98,7 +106,41 @@ public class Console extends Panel {
             if (event.getCode() == KeyCode.ENTER) {
                 stdin.println(commandField.getText());
                 stdin.flush();
+                if (!Objects.equals(history.get(history.size() - 1), commandField.getText())) {
+                    history.add(commandField.getText());
+                }
                 commandField.setText("");
+            } else if (event.getCode() == KeyCode.UP) {
+                Logger.log("detected");
+                if (numInHistory < history.size()) {
+                    commandField.setText(history.get(history.size() - numInHistory));
+                    commandField.positionCaret(history.get(history.size() - numInHistory).length());
+                    numInHistory++;
+                }
+            }
+            switch (event.getCode()) {
+                case ENTER:
+                    stdin.println(commandField.getText());
+                    stdin.flush();
+                    if (history.size() > 0 && !Objects.equals(history.get(history.size() - 1), commandField.getText())) {
+                        history.add(commandField.getText());
+                    }
+                    commandField.setText("");
+                    break;
+                case UP:
+                    if (numInHistory >= 0 && numInHistory < history.size()) {
+                        commandField.setText(history.get(history.size() - numInHistory));
+                        commandField.positionCaret(history.get(history.size() - numInHistory).length());
+                        numInHistory++;
+                    }
+                    break;
+                case DOWN:
+                    if (numInHistory >= 0 && numInHistory < history.size()) {
+                        commandField.setText(history.get(history.size() - numInHistory + 1));
+                        commandField.positionCaret(history.get(history.size() - numInHistory + 1).length());
+                        numInHistory--;
+                    }
+                    break;
             }
         });
         setCanTakeAllSize(textArea);

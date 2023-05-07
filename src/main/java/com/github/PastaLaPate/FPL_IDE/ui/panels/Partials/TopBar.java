@@ -3,6 +3,7 @@ package com.github.PastaLaPate.FPL_IDE.ui.panels.Partials;
 import com.github.PastaLaPate.FPL_IDE.ui.Constants;
 import com.github.PastaLaPate.FPL_IDE.ui.Panel;
 import com.github.PastaLaPate.FPL_IDE.ui.PanelManager;
+import com.github.PastaLaPate.FPL_IDE.ui.panels.Pages.EditorViewer;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -103,6 +104,7 @@ public class TopBar extends Panel {
         button.setTranslateX(50);
         button.setTranslateY(12);
         button.setBackground(null);
+        button.setOnMouseClicked(e -> EditorViewer.saveCurrentFile());
         button.setFont(new Font(Constants.JetBrainsMono.getFamily(), 15));
         button.setStyle("-fx-text-fill: white");
         layout.getChildren().add(button);

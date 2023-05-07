@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flat</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="Images/logo.png">
+    <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+
+</head>
+<body>
+    <nav>
+        <img alt="logo" src="Images/logo.png">
+        <ul>
+            <li><a class="btn" href="#home">Home</a></li>
+        </ul>
+    </nav>
+    <div class="login-wrapper" id="login-wrapper firebaseui-auth-container">
+
+    </div>
+    <div id="loader"></div>
+            <script type="module">
+                // Import the functions you need from the SDKs you need
+                import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
+                import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-analytics.js";
+                import { getAuth } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js"
+                // TODO: Add SDKs for Firebase products that you want to use
+                // https://firebase.google.com/docs/web/setup#available-libraries
+
+                // Your web app's Firebase configuration
+                // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+                const firebaseConfig = {
+                    apiKey: "AIzaSyCTVlRNKCcO9o12URRrVC8LPvTmz33wXmM",
+                    authDomain: "flat-c14df.firebaseapp.com",
+                    projectId: "flat-c14df",
+                    storageBucket: "flat-c14df.appspot.com",
+                    messagingSenderId: "858134774708",
+                    appId: "1:858134774708:web:d0b1fb7b17b02f8ad6a8e1",
+                    measurementId: "G-01QXQEC972"
+                };
+
+                // Initialize Firebase
+                const app = initializeApp(firebaseConfig);
+                const analytics = getAnalytics(app);
+                const auth = getAuth(app);
+                var ui = new firebaseui.auth.AuthUI(auth);
+
+                var uiConfig = {
+                    callbacks: {
+                        signInSuccessWithAuthResult: function (authResult, redirectUrl) {
+                             // User successfully signed in.
+                            // Return type determines whether we continue the redirect automatically
+                                // or whether we leave that to developer to handle.                                return true;
+                        },
+                        uiShown: function () {
+                             // The widget is rendered.
+                             // Hide the loader.
+                             document.getElementById('loader').style.display = 'none';
+                        }
+                    },
+                    // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
+                    signInFlow: 'popup',
+                    signInSuccessUrl: '<url-to-redirect-to-on-success>',
+                    signInOptions: [
+                    // Leave the lines as is for the providers you want to offer your users.
+                    firebase.auth.EmailAuthProvider.PROVIDER_ID,
+                    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+                    firebase.auth.GithubAuthProvider.PROVIDER_ID
+                    ],
+                    // Terms of service url.
+                    tosUrl: '<your-tos-url>',
+                    // Privacy policy url.
+                     privacyPolicyUrl: '<your-privacy-policy-url>'
+                };
+
+                                    ui.start('#firebaseui-auth-container', uiConfig);
+            </script>
+            
+            <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
+            <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
+</body>
+</html>
