@@ -1,4 +1,7 @@
-# FPL_IDE
+# Flat
+
+![Logo](https://i.ibb.co/v3vf1w7/logo.png)
+
 [![GitHub issues](https://img.shields.io/github/issues/PastaLaPate/FPL_IDE?label=Issues)](https://github.com/PastaLaPate/FPL_IDE/issues)
 [![GitHub license](https://img.shields.io/github/license/PastaLaPate/FPL_IDE?label=License)](https://github.com/PastaLaPate/FPL_IDE/blob/master/LICENSE.md)
 ![GitHub all releases](https://img.shields.io/github/downloads/PastaLaPate/FPL_IDE/total?label=Downloads)
