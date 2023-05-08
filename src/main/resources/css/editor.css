@@ -1,8 +1,38 @@
+@font-face {
+    -fx-font-family: "JetBrains Mono";
+    src: url("../fonts/EditorFont.ttf");
+}
+
 .keyword {
     -fx-fill: #B8860BFF !important;
 }
 
+.semicolon {
+    -fx-font-weight: bold;
+}
+.paren {
+    -fx-fill: firebrick !important;
+    -fx-font-weight: bold;
+}
+.bracket {
+    -fx-fill: darkgreen !important;
+    -fx-font-weight: bold;
+}
+.brace {
+    -fx-fill: teal !important;
+    -fx-font-weight: bold;
+}
+.string {
+    -fx-fill: blue !important;
+}
+
+.comment {
+	-fx-fill: cadetblue !important;
+}
+
 .codeArea .text {
+    -fx-font-size: 20px;
+    -fx-font-family: "JetBrains Mono";
     -fx-fill: white;
 }
 

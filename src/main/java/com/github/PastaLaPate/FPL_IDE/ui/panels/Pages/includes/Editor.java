@@ -5,10 +5,15 @@ import com.github.PastaLaPate.FPL_IDE.ui.Panel;
 import com.github.PastaLaPate.FPL_IDE.ui.PanelManager;
 import com.github.PastaLaPate.FPL_IDE.util.Saver;
 import com.github.PastaLaPate.FPL_IDE.util.Syntax.SyntaxHighLighter;
+import com.github.PastaLaPate.FPL_IDE.util.autoCompleter.AutoCompleter;
 import javafx.application.Platform;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -21,11 +26,14 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.IntFunction;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Editor extends Panel {
 
     private final SyntaxHighLighter syntaxHighLighter = new SyntaxHighLighter();
     private final File file;
+    private AutoCompleter completer;
 
     CodeArea area;
 
@@ -45,6 +53,7 @@ public class Editor extends Panel {
     @Override
     public void initComponents() {
         area = new CodeArea();
+        completer = new AutoCompleter(area);
         IntFunction<Node> factory = LineNumberFactory.get(area);
         area.setParagraphGraphicFactory(factory);
         Color color = Constants.BACKGROUND;
@@ -59,23 +68,26 @@ public class Editor extends Panel {
                 area.moveTo(area.getCaretPosition() - 1);
             }
             previousChar.set(event.getCharacter());
-            highlight();
-        });
-        area.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                if (Objects.equals(previousChar.get(), "{")) {
-                    area.setWrapText(true);
-                    area.insertText(area.getCaretPosition(), "    " + System.lineSeparator());
-                    area.moveTo(area.getCaretPosition() - 1);
-                }
-            } else if (event.getCode() == KeyCode.TAB) {
-                String s = "    ";
-                area.deleteText(area.getCaretPosition() - 1, area.getCaretPosition());
-                area.insertText(area.getCaretPosition(), s);
-                event.consume();
+            Bounds caretBounds = area.getCaretBounds().orElse(null);
+            if (caretBounds != null) {
+                double x = caretBounds.getMinX();
+                double y = caretBounds.getMinY() + caretBounds.getHeight();
+                new ContextMenu(new MenuItem("test"), new MenuItem("test2")).show(area, x, y);
             }
         });
-        area.setOnScrollFinished(event -> highlight());
+
+        final Pattern whiteSpace = Pattern.compile( "^\\s+" );
+        area.addEventHandler( KeyEvent.KEY_PRESSED, KE ->
+        {
+            if ( KE.getCode() == KeyCode.ENTER ) {
+                int caretPosition = area.getCaretPosition();
+                int currentParagraph = area.getCurrentParagraph();
+                Matcher m0 = whiteSpace.matcher( area.getParagraph( currentParagraph-1 ).getSegments().get( 0 ) );
+                if ( m0.find() ) Platform.runLater( () -> area.insertText( caretPosition, m0.group() ) );
+            }
+        });
+
+        Platform.runLater(this::highlight);
         area.getStyleClass().add("codeArea");
         area.setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
         layout.add(area, 0, 0);
