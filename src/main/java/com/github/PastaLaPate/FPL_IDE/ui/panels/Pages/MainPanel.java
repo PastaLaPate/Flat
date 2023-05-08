@@ -28,6 +28,9 @@ public class MainPanel extends Panel {
         columnConstraints.setMaxWidth(400);
         this.layout.getColumnConstraints().addAll(columnConstraints, new ColumnConstraints());
 
+        layout.setGridLinesVisible(true);
+        layout.setHgap(10);
+
         EditorViewer editorViewer = new EditorViewer(panelManager);
         Files files = new Files(panelManager,  editorViewer);
         layout.add(files.getLayout(), 0, 0);

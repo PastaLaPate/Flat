@@ -10,7 +10,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.GridPane;
 
 import java.io.IOException;
 
@@ -54,7 +57,7 @@ public class DownloadScreen extends Panel {
             panelManager.show(new MainPanel(panelManager));
         } else if (e.getDownload_step() == Downloader.DOWNLOAD_STEP.DOWNLOADING) {
             label.setText("Downloading " + e.getFileName() + " " + e.getFileNumber() + "/" + e.getMaxfiles());
-            progressBar.setProgress(e.getFileNumber() / e.getMaxfiles());
+            progressBar.setProgress((double) e.getFileNumber() / e.getMaxfiles());
             if (e.getFileNumber() == e.getMaxfiles()) {
                 try {
                     Thread.sleep(1000);

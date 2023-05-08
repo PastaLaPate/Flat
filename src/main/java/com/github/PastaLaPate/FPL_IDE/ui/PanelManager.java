@@ -72,7 +72,7 @@ public class PanelManager {
     }
 
     public void show(IPanel panel) {
-        contentPane.getChildren().removeAll();
+        contentPane.getChildren().clear();
         javafx.application.Platform.runLater(() -> {
             contentPane.getChildren().add(panel.getLayout());
             stage.setTitle("FPL IDE " + Main.VERSION + " - " + panel.getPanelName());

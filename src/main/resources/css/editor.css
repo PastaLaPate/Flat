@@ -1,10 +1,18 @@
 .keyword {
-    -fx-fill: #B8860BFF;
+    -fx-fill: #B8860BFF !important;
 }
-/*
+
 .codeArea .text {
     -fx-fill: white;
-}*/
+}
+
+.codeArea .caret {
+    -fx-stroke: white;
+}
+
+.codeArea .lineno {
+    -fx-background-color: #272727FF;
+}
 
 .typeHighlight {
     -fx-text-fill: #008B8BFF;

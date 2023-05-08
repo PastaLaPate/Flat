@@ -1,20 +1,19 @@
 package com.github.PastaLaPate.FPL_IDE.util.Syntax;
 
 import javafx.application.Platform;
-
-import java.util.*;
-import java.util.regex.Pattern;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.GenericStyledArea;
-import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.Paragraph;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.reactfx.collection.ListModification;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SyntaxHighLighter {
 
@@ -45,7 +44,6 @@ public class SyntaxHighLighter {
 
     // GENERATE SYNTAX
     public void generateSyntax(CodeArea pane) {
-        pane.setParagraphGraphicFactory(LineNumberFactory.get(pane));
         pane.getVisibleParagraphs().addModificationObserver(
                 new VisibleParagraphStyler<>(pane, this::computeHighlighting)
         );

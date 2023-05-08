@@ -7,17 +7,20 @@ import com.github.PastaLaPate.FPL_IDE.util.Saver;
 import com.github.PastaLaPate.FPL_IDE.util.Syntax.SyntaxHighLighter;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.IntFunction;
 
 public class Editor extends Panel {
 
@@ -42,8 +45,9 @@ public class Editor extends Panel {
     @Override
     public void initComponents() {
         area = new CodeArea();
+        IntFunction<Node> factory = LineNumberFactory.get(area);
+        area.setParagraphGraphicFactory(factory);
         Color color = Constants.BACKGROUND;
-
         setCanTakeAllSize(area);
         AtomicReference<String> previousChar = new AtomicReference<>();
         area.setOnKeyTyped(event -> {

@@ -1,3 +1,27 @@
-.editor {
-    -fx-background-color: rgb("");
+.keyword {
+    -fx-fill: #B8860BFF !important;
+}
+
+.codeArea .text {
+    -fx-fill: white;
+}
+
+.codeArea .caret {
+    -fx-stroke: white;
+}
+
+.codeArea .lineno {
+    -fx-background-color: #272727FF;
+}
+
+.typeHighlight {
+    -fx-text-fill: #008B8BFF;
+}
+
+.variableHighlight {
+    -fx-text-fill: #228B22FF;
+}
+
+.charHighlight {
+    -fx-text-fill: #B22222FF;
 }
