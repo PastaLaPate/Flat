@@ -2,18 +2,16 @@ package com.github.PastaLaPate.FPL_IDE.util.autoCompleter;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.fxmisc.richtext.CodeArea;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class AutoCompleter {
 
-    private ObservableList<Completion> completions;
-    private CodeArea area;
+    private final ObservableList<Completion> completions;
 
-    public AutoCompleter(CodeArea area) {
-        this.area = area;
+    public AutoCompleter() {
 
         this.completions = FXCollections.observableArrayList();
         this.completions.addAll(
@@ -25,7 +23,12 @@ public class AutoCompleter {
                 new Completion(Completion.CompleteType.NOTHING, "decimal"),
                 // BASICS FUNCTION
                 new Completion(Completion.CompleteType.NOTHING, "envoyer")
-                        .addCompletion(new Completion(Completion.CompleteType.VALUE, ""))
+                        .addCompletion(new Completion(Completion.CompleteType.VALUE, "")),
+                // FICHIERS
+                new Completion(Completion.CompleteType.NOTHING, "fichier")
+                        .addCompletion(new Completion(Completion.CompleteType.ENUM, "")
+                                .addToEnum("lire")
+                                .addToEnum("ecrire"))
         );
     }
 
@@ -41,14 +44,23 @@ public class AutoCompleter {
             beforeLastWord = "";
         }
         completions.forEach(completion -> {
-            if (completion.completion.startsWith(lastword)) {
-                response.add(completion);
-            } else if (completion.completion.startsWith(beforeLastWord)) {
+            if (Objects.equals(completion.completion, beforeLastWord)) {
+                System.out.println(completion.completion);
                 completion.completions.forEach(completion1 -> {
-                    if (completion1.completion.startsWith(lastword)) {
-                        response.add(completion1);
+                    if (completion1.type == Completion.CompleteType.ENUM) {
+                        completion1.enumList.forEach(s -> {
+                            if (s.startsWith(lastword)) {
+                                response.add(new Completion(Completion.CompleteType.VALUE, s));
+                            }
+                        });
+                    } else {
+                        if (completion1.completion.startsWith(lastword)) {
+                            response.add(completion1);
+                        }
                     }
                 });
+            } else if (completion.completion.startsWith(lastword)) {
+                response.add(completion);
             }
         });
 
