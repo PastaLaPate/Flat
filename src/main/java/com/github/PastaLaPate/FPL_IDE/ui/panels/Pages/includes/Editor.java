@@ -6,12 +6,10 @@ import com.github.PastaLaPate.FPL_IDE.ui.PanelManager;
 import com.github.PastaLaPate.FPL_IDE.util.Saver;
 import com.github.PastaLaPate.FPL_IDE.util.Syntax.SyntaxHighLighter;
 import com.github.PastaLaPate.FPL_IDE.util.autoCompleter.AutoCompleter;
+import com.github.PastaLaPate.FPL_IDE.util.autoCompleter.CompletionPopup;
 import javafx.application.Platform;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
@@ -53,6 +51,7 @@ public class Editor extends Panel {
     @Override
     public void initComponents() {
         area = new CodeArea();
+        CompletionPopup completionPopup = new CompletionPopup(area);
         completer = new AutoCompleter(area);
         IntFunction<Node> factory = LineNumberFactory.get(area);
         area.setParagraphGraphicFactory(factory);
@@ -68,12 +67,7 @@ public class Editor extends Panel {
                 area.moveTo(area.getCaretPosition() - 1);
             }
             previousChar.set(event.getCharacter());
-            Bounds caretBounds = area.getCaretBounds().orElse(null);
-            if (caretBounds != null) {
-                double x = caretBounds.getMinX();
-                double y = caretBounds.getMinY() + caretBounds.getHeight();
-                new ContextMenu(new MenuItem("test"), new MenuItem("test2")).show(area, x, y);
-            }
+            completionPopup.showPopup(completer.complete(area.getText()));
         });
 
         final Pattern whiteSpace = Pattern.compile( "^\\s+" );
