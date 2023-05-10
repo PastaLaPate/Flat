@@ -5,11 +5,11 @@ import javafx.scene.image.Image;
 import java.io.File;
 
 public class FileView {
-    private final int arbo;
+    public final int arbo;
     private Image icon;
-    private final String fileName;
+    private String fileName;
 
-    private final File file;
+    private File file;
 
     public FileView(String fileName, FileType fileType, File file, int arbo) {
         this.file = file;
@@ -22,6 +22,21 @@ public class FileView {
         }
     }
 
+    public void update(File newFile) {
+        this.file = newFile;
+        this.fileName = newFile.getName();
+        if (newFile.isDirectory()) {
+            icon = new Image("images/folder.png");
+        } else {
+            icon = new Image("images/file.png");
+        }
+    }
+
+
+    public String getFileName() {
+        return fileName;
+    }
+
     public Image getIcon() {
         return icon;
     }
@@ -29,6 +44,10 @@ public class FileView {
     @Override
     public String toString() {
         return "   ".repeat(Math.max(0, arbo)) + fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public File getFile() {

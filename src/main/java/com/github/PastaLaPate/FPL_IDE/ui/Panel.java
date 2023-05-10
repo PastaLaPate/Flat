@@ -1,8 +1,7 @@
 package com.github.PastaLaPate.FPL_IDE.ui;
 
 import javafx.animation.FadeTransition;
-import javafx.scene.Group;
-import javafx.scene.Scene;
+import javafx.application.Platform;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 
@@ -16,12 +15,12 @@ public abstract class Panel implements IPanel {
 
     public Panel(PanelManager panelManager) {
         this.panelManager = panelManager;
-        this.initComponents();
+        Platform.runLater(() -> {initComponents();});
     }
 
     @Override
     public void onShow() {
-        final FadeTransition transition = new FadeTransition(Duration.seconds(1), this.layout);
+        final FadeTransition transition = new FadeTransition(Duration.seconds(3), this.layout);
         transition.setFromValue(0);
         transition.setToValue(1);
         transition.setAutoReverse(true);

@@ -1,8 +1,6 @@
 package com.github.PastaLaPate.FPL_IDE.ui;
 
 import com.github.PastaLaPate.FPL_IDE.Main;
-import com.github.PastaLaPate.FPL_IDE.ui.panels.Pages.MainPanel;
-import com.github.PastaLaPate.FPL_IDE.ui.panels.Pages.includes.Console;
 import com.github.PastaLaPate.FPL_IDE.ui.panels.Partials.TopBar;
 import com.github.PastaLaPate.FPL_IDE.util.Platform;
 import com.goxr3plus.fxborderlessscene.borderless.BorderlessScene;
@@ -21,7 +19,7 @@ public class PanelManager {
 
     private final Stage stage;
     private final GridPane contentPane = new GridPane();
-    TopBar topBar;
+    public static TopBar topBar;
 
     public PanelManager(Stage stage) {
         this.stage = stage;
@@ -73,15 +71,9 @@ public class PanelManager {
 
     public void show(IPanel panel) {
         contentPane.getChildren().clear();
-        javafx.application.Platform.runLater(() -> {
-            contentPane.getChildren().add(panel.getLayout());
-            stage.setTitle("FPL IDE " + Main.VERSION + " - " + panel.getPanelName());
-            panel.getDimension().setStageDimension(stage);
-            panel.onShow();
-            if (panel instanceof MainPanel) {
-                topBar.makeRunButtonEnabled(Console.getRunHandler());
-                topBar.makeSaveButtonEnabled();
-            }
-        });
+        contentPane.getChildren().add(panel.getLayout());
+        stage.setTitle("FPL IDE " + Main.VERSION + " - " + panel.getPanelName());
+        panel.getDimension().setStageDimension(stage);
+        panel.onShow();
     }
 }

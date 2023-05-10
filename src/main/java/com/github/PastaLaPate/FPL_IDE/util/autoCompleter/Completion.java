@@ -11,10 +11,12 @@ public class Completion {
     public final List<String> enumList;
 
     public final String completion;
+    private final boolean futur;
 
 
-    public Completion(CompleteType type, String completion) {
+    public Completion(CompleteType type, String completion, boolean futur) {
         this.type = type;
+        this.futur = futur;
         this.completion = completion;
         this.enumList = new ArrayList<>();
         this.completions = new ArrayList<>();
@@ -25,6 +27,9 @@ public class Completion {
         return this;
     }
 
+    public boolean isFutur() {
+        return futur;
+    }
 
     public Completion addCompletion(Completion completion) {
         completions.add(completion);
@@ -32,6 +37,6 @@ public class Completion {
     }
 
     enum CompleteType {
-        VALUE, ENUM, NOTHING
+        VALUE, ENUM, BASE
     }
 }

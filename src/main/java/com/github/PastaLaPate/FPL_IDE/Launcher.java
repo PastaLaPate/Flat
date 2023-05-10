@@ -4,6 +4,7 @@ import com.github.PastaLaPate.FPL_IDE.ui.PanelManager;
 import com.github.PastaLaPate.FPL_IDE.ui.panels.Pages.DownloadScreen;
 import com.github.PastaLaPate.FPL_IDE.util.SettingsManager;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 public class Launcher extends Application {
@@ -15,6 +16,6 @@ public class Launcher extends Application {
         PanelManager panelManager = new PanelManager(primaryStage);
         DownloadScreen downloadScreen = new DownloadScreen(panelManager);
         panelManager.show(downloadScreen);
-        downloadScreen.download();
+        Platform.runLater(downloadScreen::download);
     }
 }

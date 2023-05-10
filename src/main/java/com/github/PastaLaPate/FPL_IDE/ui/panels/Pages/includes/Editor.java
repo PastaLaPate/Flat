@@ -34,25 +34,20 @@ public class Editor extends Panel {
     private AutoCompleter completer;
 
     CodeArea area;
+    Saver saver = new Saver();
 
     public Editor(PanelManager panelManager, File file) {
         super(panelManager);
         this.panelName = file.getName();
         this.file = file;
-        Saver saver = new Saver();
-        try {
-            area.replaceText(saver.getFile(file.getPath()));
-            Platform.runLater(this::highlight);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
     }
 
     @Override
     public void initComponents() {
         area = new CodeArea();
         CompletionPopup completionPopup = new CompletionPopup(area);
-        completer = new AutoCompleter(area);
+        completer = new AutoCompleter();
         IntFunction<Node> factory = LineNumberFactory.get(area);
         area.setParagraphGraphicFactory(factory);
         Color color = Constants.BACKGROUND;
@@ -69,6 +64,12 @@ public class Editor extends Panel {
             previousChar.set(event.getCharacter());
             completionPopup.showPopup(completer.complete(area.getText()));
         });
+        try {
+            area.replaceText(saver.getFile(file.getPath()));
+            Platform.runLater(this::highlight);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         final Pattern whiteSpace = Pattern.compile( "^\\s+" );
         area.addEventHandler( KeyEvent.KEY_PRESSED, KE ->

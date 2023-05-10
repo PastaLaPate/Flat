@@ -23,6 +23,9 @@ public class Saver {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if (input == null) {
+            return  "";
+        }
         StringBuilder r = new StringBuilder();
         int code;
         while (true) {

@@ -7,16 +7,18 @@ import com.github.PastaLaPate.FPL_IDE.ui.panels.Pages.EditorViewer;
 import com.github.PastaLaPate.FPL_IDE.util.Downloader;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.GridPane;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Files extends Panel {
 
@@ -46,6 +48,8 @@ public class Files extends Panel {
         listViewReference = new ListView<>();
         listViewReference.setBackground(new Background(new BackgroundFill(Constants.BACKGROUND, CornerRadii.EMPTY, Insets.EMPTY)));
         listViewReference.setOrientation(Orientation.VERTICAL);
+        listViewReference.setEditable(true);
+
         listViewReference.setCellFactory(param -> new ListCell<>(){
             private final ImageView imageView = new ImageView();
 
@@ -59,6 +63,101 @@ public class Files extends Panel {
                     imageView.setImage(item.getIcon());
                     imageView.setFitHeight(32);
                     imageView.setFitWidth(32);
+                    ContextMenu menu = new ContextMenu();
+                    MenuItem rename = new MenuItem("Rename");
+                    rename.setOnAction(event -> {
+                        TextInputDialog dialog = new TextInputDialog(item.getFileName());
+                        dialog.setTitle("Rename File");
+                        dialog.setHeaderText("Enter a new name for the file:");
+                        dialog.setContentText("New Name:");
+                        Optional<String> result = dialog.showAndWait();
+                        result.ifPresent(newName -> {
+                            File newFile = new File(item.getFile().getParent() + File.separator + newName);
+                            if (item.getFile().renameTo(newFile)) {
+                                item.setFileName(newName);
+                                item.update(newFile);
+                                setText(item.toString());
+                                getListView().refresh();
+                            } else {
+                                Alert alert = new Alert(Alert.AlertType.ERROR);
+                                alert.setTitle("Error Renaming File");
+                                alert.setHeaderText("Could not rename file:");
+                                alert.setContentText("The file may be in use or you may not have permission to modify it.");
+                                alert.showAndWait();
+                            }
+                        });
+                    });
+                    MenuItem newFile = new MenuItem("New file/directory");
+                    newFile.setOnAction(event -> {
+                        if (item.getFile().isDirectory()) {
+                            TextInputDialog dialog = new TextInputDialog(item.getFileName());
+                            dialog.setTitle("Create file/directory");
+                            dialog.setHeaderText("Enter a name for the file/directory:");
+                            dialog.setContentText("Name:");
+
+                            ToggleGroup fileTypeGroup = new ToggleGroup();
+                            RadioButton fileRadioButton = new RadioButton("File");
+                            RadioButton directoryRadioButton = new RadioButton("Directory");
+                            fileRadioButton.setToggleGroup(fileTypeGroup);
+                            directoryRadioButton.setToggleGroup(fileTypeGroup);
+
+                            GridPane gridPane = new GridPane();
+                            gridPane.setHgap(10);
+                            gridPane.setHgap(10);
+                            gridPane.setPadding(new Insets(20, 150, 10, 10));
+
+                            gridPane.add(new Label("File type : "), 0, 0);
+                            gridPane.add(fileRadioButton, 1, 0);
+                            gridPane.add(directoryRadioButton, 2, 0);
+                            gridPane.add(new Label("Name:"), 0, 1);
+                            gridPane.add(dialog.getEditor(), 1, 1, 2, 1);
+
+                            dialog.getDialogPane().setContent(gridPane);
+                            dialog.getEditor().requestFocus();
+
+                            Optional<String> result = dialog.showAndWait();
+                            result.ifPresent(newName -> {
+                                Toggle toggle = fileTypeGroup.getSelectedToggle();
+                                File addedFile = new File(item.getFile().getPath() + File.separator + newName);
+                                FileView.FileType fileType;
+                                if (toggle == fileRadioButton) {
+                                    fileType = FileView.FileType.FILE;
+                                    try {
+                                        addedFile.createNewFile();
+                                    } catch (IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                } else {
+                                    fileType = FileView.FileType.FOLDER;
+                                    if (!addedFile.mkdir()) {
+                                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                                        alert.setTitle("Error creating folder");
+                                        alert.setHeaderText("Could not create folder:");
+                                        alert.setContentText("The file may be in use or you may not have permission to modify it.");
+                                        alert.showAndWait();
+                                    }
+                                }
+
+                                getListView().getItems().add(
+                                        new FileView(newName, fileType, addedFile, item.arbo + 1)
+                                );
+                                getListView().refresh();
+                            });
+                        }
+                    });
+                    if (item.getFile().isDirectory()) {
+                        menu.getItems().add(newFile);
+                    }
+                    menu.getItems().add(rename);
+                    setContextMenu(menu);
+                    setOnMouseClicked(event -> {
+                        if (event.getClickCount() == 2 && !event.isConsumed() && event.getButton() == MouseButton.PRIMARY) {
+                            FileView file = item;
+                            if (!file.getFile().isDirectory()) {
+                                editorViewer.addEditor(file);
+                            }
+                        }
+                    });
                     setText(item.toString());
                     setGraphic(imageView);
                     setFont(Constants.JetBrainsMono);
@@ -66,17 +165,13 @@ public class Files extends Panel {
                 setStyle("-fx-background-color: transparent; -fx-text-fill: white;");
             }
         });
-        listViewReference.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2 && !event.isConsumed()) {
-                FileView file = listViewReference.getSelectionModel().getSelectedItem();
-                if (file != null && !file.getFile().isDirectory()) {
-                    editorViewer.addEditor(file);
-                }
-            }
-        });
         setCanTakeAllSize(listViewReference);
         try {
-            seeFolder(new File(Downloader.getPathFolder()), 0);
+            File defaultDirectory = new File(Downloader.getPathFolder() + "/workspace");
+            if (!defaultDirectory.exists()) {
+                defaultDirectory.mkdir();
+            }
+            seeFolder(defaultDirectory, 0);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

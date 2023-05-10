@@ -16,17 +16,17 @@ public class AutoCompleter {
         this.completions = FXCollections.observableArrayList();
         this.completions.addAll(
                 // TYPES
-                new Completion(Completion.CompleteType.NOTHING, "vide"),
-                new Completion(Completion.CompleteType.NOTHING, "entier"),
-                new Completion(Completion.CompleteType.NOTHING, "texte"),
-                new Completion(Completion.CompleteType.NOTHING, "auto"),
-                new Completion(Completion.CompleteType.NOTHING, "decimal"),
+                new Completion(Completion.CompleteType.BASE, "vide", false),
+                new Completion(Completion.CompleteType.BASE, "entier", false),
+                new Completion(Completion.CompleteType.BASE, "texte", false),
+                new Completion(Completion.CompleteType.BASE, "auto", false),
+                new Completion(Completion.CompleteType.BASE, "decimal", false),
                 // BASICS FUNCTION
-                new Completion(Completion.CompleteType.NOTHING, "envoyer")
-                        .addCompletion(new Completion(Completion.CompleteType.VALUE, "")),
+                new Completion(Completion.CompleteType.BASE, "envoyer", false)
+                        .addCompletion(new Completion(Completion.CompleteType.VALUE, "", true)),
                 // FICHIERS
-                new Completion(Completion.CompleteType.NOTHING, "fichier")
-                        .addCompletion(new Completion(Completion.CompleteType.ENUM, "")
+                new Completion(Completion.CompleteType.BASE, "fichier", false)
+                        .addCompletion(new Completion(Completion.CompleteType.ENUM, "", true)
                                 .addToEnum("lire")
                                 .addToEnum("ecrire"))
         );
@@ -45,17 +45,14 @@ public class AutoCompleter {
         }
         completions.forEach(completion -> {
             if (Objects.equals(completion.completion, beforeLastWord)) {
-                System.out.println(completion.completion);
                 completion.completions.forEach(completion1 -> {
-                    if (completion1.type == Completion.CompleteType.ENUM) {
-                        completion1.enumList.forEach(s -> {
-                            if (s.startsWith(lastword)) {
-                                response.add(new Completion(Completion.CompleteType.VALUE, s));
-                            }
-                        });
-                    } else {
-                        if (completion1.completion.startsWith(lastword)) {
-                            response.add(completion1);
+                    if (completion1.isFutur()) {
+                        if (completion1.type == Completion.CompleteType.ENUM) {
+                            completion1.enumList.forEach(enumV -> {
+                                if (enumV.startsWith(lastword)) {
+                                    response.add(0, new Completion(Completion.CompleteType.ENUM, enumV, true));
+                                }
+                            });
                         }
                     }
                 });

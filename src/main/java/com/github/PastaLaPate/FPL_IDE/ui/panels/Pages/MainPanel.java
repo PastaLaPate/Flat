@@ -3,7 +3,9 @@ package com.github.PastaLaPate.FPL_IDE.ui.panels.Pages;
 import com.github.PastaLaPate.FPL_IDE.ui.Dimension;
 import com.github.PastaLaPate.FPL_IDE.ui.Panel;
 import com.github.PastaLaPate.FPL_IDE.ui.PanelManager;
+import com.github.PastaLaPate.FPL_IDE.ui.panels.Pages.includes.Console;
 import com.github.PastaLaPate.FPL_IDE.ui.panels.Pages.includes.Files;
+import com.github.PastaLaPate.FPL_IDE.util.Platform;
 import javafx.geometry.HPos;
 import javafx.scene.layout.ColumnConstraints;
 
@@ -22,6 +24,10 @@ public class MainPanel extends Panel {
     @Override
     public void initComponents() {
         super.initComponents();
+        if (Platform.isOnLinux()) {
+            PanelManager.topBar.makeSaveButtonEnabled();
+            PanelManager.topBar.makeRunButtonEnabled(Console.getRunHandler());
+        }
         ColumnConstraints columnConstraints = new ColumnConstraints();
         columnConstraints.setHalignment(HPos.LEFT);
         columnConstraints.setMinWidth(350);
@@ -29,7 +35,6 @@ public class MainPanel extends Panel {
         this.layout.getColumnConstraints().addAll(columnConstraints, new ColumnConstraints());
 
         layout.setGridLinesVisible(true);
-        layout.setHgap(10);
 
         EditorViewer editorViewer = new EditorViewer(panelManager);
         Files files = new Files(panelManager,  editorViewer);
