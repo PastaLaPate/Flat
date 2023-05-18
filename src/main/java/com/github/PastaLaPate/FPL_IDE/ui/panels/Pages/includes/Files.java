@@ -120,22 +120,25 @@ public class Files extends Panel {
                                 Toggle toggle = fileTypeGroup.getSelectedToggle();
                                 File addedFile = new File(item.getFile().getPath() + File.separator + newName);
                                 FileView.FileType fileType;
-                                if (toggle == fileRadioButton) {
+
+                                boolean Cresult;
+                                if (toggle.equals(fileRadioButton)) {
                                     fileType = FileView.FileType.FILE;
                                     try {
-                                        addedFile.createNewFile();
+                                        Cresult = addedFile.createNewFile();
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
                                     }
                                 } else {
-                                    fileType = FileView.FileType.FOLDER;
-                                    if (!addedFile.mkdir()) {
-                                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                                        alert.setTitle("Error creating folder");
-                                        alert.setHeaderText("Could not create folder:");
-                                        alert.setContentText("The file may be in use or you may not have permission to modify it.");
-                                        alert.showAndWait();
-                                    }
+                                    fileType =  FileView.FileType.FOLDER;
+                                    Cresult = addedFile.mkdir();
+                                }
+                                if (!Cresult) {
+                                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                                    alert.setTitle("Error creating folder/file");
+                                    alert.setHeaderText("Could not create folder/file:");
+                                    alert.setContentText("The file may be in use or you may not have permission to modify it.");
+                                    alert.showAndWait();
                                 }
 
                                 getListView().getItems().add(
@@ -145,16 +148,36 @@ public class Files extends Panel {
                             });
                         }
                     });
+                    MenuItem removeFile = new MenuItem("Remove");
+                    removeFile.setOnAction(event -> {
+                        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+                        confirmation.setTitle("Confirmation of delete");
+                        confirmation.setHeaderText("Confirm delete of " + item.getFile().getName());
+                        confirmation.setContentText("Are you sure to delete this file ?");
+
+                        Optional<ButtonType> result = confirmation.showAndWait();
+                        if (result.get() == ButtonType.OK) {
+                            if (!item.getFile().delete()) {
+                                Alert alert = new Alert(Alert.AlertType.ERROR);
+                                alert.setTitle("Error deleting file");
+                                alert.setHeaderText("Cannot delete the file:");
+                                alert.setContentText("The file may be in use or you may not have permission to modify it.");
+                                alert.showAndWait();
+                            } else {
+                                getListView().refresh();
+                                getListView().getItems().remove(item);
+                            }
+                        }
+                    });
                     if (item.getFile().isDirectory()) {
                         menu.getItems().add(newFile);
                     }
-                    menu.getItems().add(rename);
+                    menu.getItems().addAll(rename, removeFile);
                     setContextMenu(menu);
                     setOnMouseClicked(event -> {
                         if (event.getClickCount() == 2 && !event.isConsumed() && event.getButton() == MouseButton.PRIMARY) {
-                            FileView file = item;
-                            if (!file.getFile().isDirectory()) {
-                                editorViewer.addEditor(file);
+                            if (!item.getFile().isDirectory()) {
+                                editorViewer.addEditor(item);
                             }
                         }
                     });
